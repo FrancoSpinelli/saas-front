@@ -18,8 +18,9 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { activeCategoryToggle, getCategories } from "../../api/services";
+import { activeCategoryToggle, deleteCategory, getCategories } from "../../api/services";
 import Subtitle from "../../Components/Subtitle";
+import { confirmAlert } from "../../Components/SweetAlert";
 import { Category } from "../../types";
 import { getInitials } from "../../utils";
 
@@ -51,15 +52,23 @@ export default function CategoriesPage() {
     }, [showInactive]);
 
     const handleEdit = (id: string) => {
-        console.log("Editar categoría:", id);
+        window.location.href = `/categories/edit/${id}`;
     };
 
     const handleDelete = (id: string) => {
-        console.log("Eliminar categoría:", id);
+        confirmAlert("¿Estás seguro?", "Esta acción no se puede deshacer").then(async (confirmed) => {
+            if (confirmed) {
+                const response = await deleteCategory(id);
+                if (response.success) {
+                    toast.success("Categoría eliminada exitosamente");
+                    fetchCategories();
+                }
+            }
+        });
     };
 
     const handleCreate = () => {
-       window.location.href = "/categories/create";
+        window.location.href = "/categories/create";
     };
 
 

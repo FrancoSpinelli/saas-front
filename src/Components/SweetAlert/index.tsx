@@ -26,3 +26,19 @@ export const ErrorAlert = ({ title, text, onClose }: AlertOptions) =>
     }).then(() => {
         if (onClose) onClose();
     });
+
+
+export const confirmAlert = async (title: string, text: string): Promise<boolean> => {
+    const result = await MySwal.fire({
+        title,
+        text,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Continuar',
+        cancelButtonText: 'Cancelar',
+    });
+
+    return result.isConfirmed;
+}

@@ -69,11 +69,28 @@ export async function apiPost<T>(
 	return response.data;
 }
 
+export const apiPut = async <T>(
+	url: string,
+	data?: unknown,
+	config?: AxiosRequestConfig
+): Promise<ResponseData<T>> => {
+	const response = await http.put<ResponseData<T>>(url, data, config);
+	return response.data;
+};
+
 export async function apiPatch<T>(
 	url: string,
 	data?: unknown,
 	config?: AxiosRequestConfig
 ): Promise<ResponseData<T>> {
 	const response = await http.patch<ResponseData<T>>(url, data, config);
+	return response.data;
+}
+
+export async function apiDelete<T>(
+	url: string,
+	config?: AxiosRequestConfig
+): Promise<ResponseData<T>> {
+	const response = await http.delete<ResponseData<T>>(url, config);
 	return response.data;
 }

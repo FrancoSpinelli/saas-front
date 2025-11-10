@@ -11,6 +11,7 @@ import RegisterPage from "./pages/Public/RegisterPage";
 import ServicesPage from "./pages/Services/ServicesPage";
 import SubscriptionsPage from "./pages/Subscriptions/SubscriptionsPage";
 import UsersPage from "./pages/User/UsersPage";
+import CreateCategoryPage from "./pages/Categories/CreateOrEditCategoryPage";
 
 
 function App() {
@@ -33,6 +34,12 @@ function App() {
           } />
           <Route path="categories" element={
             <ProtectedRoute><CategoriesPage /></ProtectedRoute>
+          } />
+          <Route path="categories/create" element={
+            <ProtectedRoute><CreateCategoryPage /></ProtectedRoute>
+          } />
+          <Route path="categories/edit/:id" element={
+            <ProtectedRoute><CreateCategoryPage /></ProtectedRoute>
           } />
           <Route path="services" element={
             <ProtectedRoute><ServicesPage /></ProtectedRoute>
