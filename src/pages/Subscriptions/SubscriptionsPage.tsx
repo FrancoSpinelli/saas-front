@@ -10,10 +10,10 @@ import {
     TableRow
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { getSubscriptions } from "../api/services";
-import Subtitle from "../Components/Subtitle";
-import { Subscription } from "../types";
-import { dateFormatter, getInitials, nameFormatter } from "../utils";
+import { getSubscriptions } from "../../api/services";
+import Subtitle from "../../Components/Subtitle";
+import { Subscription } from "../../types";
+import { dateFormatter, getInitials, nameFormatter } from "../../utils";
 
 export default function SubscriptionsPage() {
 

@@ -19,10 +19,10 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { activeUserToggle, getUsers } from "../api/services";
-import Subtitle from "../Components/Subtitle";
-import { Role, User } from "../types";
-import { nameFormatter } from "../utils";
+import { activeUserToggle, getUsers } from "../../api/services";
+import Subtitle from "../../Components/Subtitle";
+import { Role, User } from "../../types";
+import { nameFormatter } from "../../utils";
 
 export default function UsersPage() {
     const [users, setUsers] = useState<User[]>([]);

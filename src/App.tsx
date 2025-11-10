@@ -1,18 +1,16 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AppLayout from "./AppLayout";
-import {
-  CategoriesPage,
-  HomePage,
-  LoginPage,
-  PaymentsPage,
-  PlansPage,
-  RegisterPage,
-  ServicesPage,
-  SubscriptionsPage,
-  UsersPage
-} from "./pages";
-import ProtectedRoute from "./router/ProtectedRoute";
 
+import ProtectedRoute from "./router/ProtectedRoute";
+import CategoriesPage from "./pages/Categories/CategoriesPage";
+import HomePage from "./pages/Home/HomePage";
+import PaymentsPage from "./pages/Payments/PaymentsPage";
+import PlansPage from "./pages/Plans/PlansPage";
+import LoginPage from "./pages/Public/LoginPage";
+import RegisterPage from "./pages/Public/RegisterPage";
+import ServicesPage from "./pages/Services/ServicesPage";
+import SubscriptionsPage from "./pages/Subscriptions/SubscriptionsPage";
+import UsersPage from "./pages/User/UsersPage";
 
 
 function App() {

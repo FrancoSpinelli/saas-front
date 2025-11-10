@@ -17,17 +17,17 @@ import {
     getServices,
     getSubscriptions,
     getUserFromStorage,
-} from "../api/services";
+} from "../../api/services";
 
-import { Payment, Service, Subscription } from "../types";
+import { Payment, Service, Subscription } from "../../types";
 import {
     dateFormatter,
     nameFormatter,
     paymentMethodFormatter,
     periodFormatter,
-} from "../utils";
+} from "../../utils";
 
-import Subtitle from "../Components/Subtitle";
+import Subtitle from "../../Components/Subtitle";
 
 export default function HomePage() {
     const [loading, setLoading] = useState(true);

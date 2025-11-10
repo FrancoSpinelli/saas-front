@@ -12,7 +12,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useState } from "react";
-import { login } from "../api/services/auth.service";
+import { login } from "../../api/services/auth.service";
 import { toast } from "react-toastify";
 
 interface LoginData {

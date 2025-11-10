@@ -1,17 +1,13 @@
-
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-
 import {
     Box,
     Button,
     Checkbox,
-    Chip,
     FormControlLabel,
     IconButton,
     Paper,
-    Stack,
     Switch,
     Table,
     TableBody,
@@ -21,30 +17,29 @@ import {
     TableRow,
     Tooltip
 } from "@mui/material";
-
-
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { activeServiceToggle, getServices } from "../api/services";
-import Subtitle from "../Components/Subtitle";
-import { Service } from "../types";
-import { nameFormatter, periodFormatter } from "../utils";
+import { activePlanToggle, getPlans } from "../../api/services";
+import Subtitle from "../../Components/Subtitle";
+import { Plan } from "../../types";
+import { periodFormatter } from "../../utils";
 
-export default function ServicesPage() {
+export default function PlansPage() {
+
     const [showInactive, setShowInactive] = useState(false);
-    const [services, setServices] = useState<Service[]>([]);
+    const [plans, setPlans] = useState<Plan[]>([]);
     const [, setLoading] = useState(true);
 
-    const fetchServices = async () => {
+    const fetchPlans = async () => {
         try {
-            const res = await getServices();
-            const services = res.data;
+            const res = await getPlans();
+            const plans = res.data;
             if (!showInactive) {
-                const activeServices = services.filter((s: Service) => s.active);
-                setServices(activeServices);
+                const activePlans = plans.filter((p: Plan) => p.active);
+                setPlans(activePlans);
                 return;
             }
-            setServices(res.data);
+            setPlans(res.data);
         } catch (error) {
             console.error(error);
         } finally {
@@ -53,34 +48,34 @@ export default function ServicesPage() {
     };
 
     useEffect(() => {
-        fetchServices();
+        fetchPlans();
     }, [showInactive]);
 
-
     const handleEdit = (id: string) => {
-        console.log("Editar servicio:", id);
+        console.log("Editar plan:", id);
     };
 
     const handleDelete = (id: string) => {
-        console.log("Eliminar servicio:", id);
+        console.log("Eliminar plan:", id);
     };
 
     const handleCreate = () => {
-        console.log("Crear servicio");
+        console.log("Crear plan");
     };
 
     const handleToggleActive = async (id: string, currentState: boolean) => {
-        const response = await activeServiceToggle(id);
+        const response = await activePlanToggle(id);
         if (response.success) {
-            toast.success(`Servicio ${currentState ? "desactivado" : "activado"} exitosamente`);
-            fetchServices();
+            toast.success(`Plan ${currentState ? "desactivado" : "activado"} exitosamente`);
+            fetchPlans();
         }
     };
+
     return (
         <Box p={3}>
             <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Subtitle>
-                    Servicios
+                    Planes
                 </Subtitle>
 
 
@@ -89,64 +84,49 @@ export default function ServicesPage() {
                     startIcon={<AddIcon />}
                     onClick={handleCreate}
                 >
-                    Nuevo Servicio
+                    Nuevo Plan
                 </Button>
             </Box>
+
             <TableContainer component={Paper} sx={{ mt: 1 }}>
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell align="left"><strong>Activo</strong></TableCell>
-                            <TableCell align="center"><strong>Autor</strong></TableCell>
+                            <TableCell><strong>Activo</strong></TableCell>
                             <TableCell><strong>Nombre</strong></TableCell>
-                            <TableCell><strong>Descripción</strong></TableCell>
-                            <TableCell align="center"><strong>Categoría</strong></TableCell>
-                            <TableCell align="center"><strong>Planes</strong></TableCell>
+                            <TableCell align="center"><strong>Período</strong></TableCell>
+                            <TableCell align="center"><strong>Precio</strong></TableCell>
+                            <TableCell align="center"><strong>Moneda</strong></TableCell>
                             <TableCell align="right"><strong>Acciones</strong></TableCell>
                         </TableRow>
                     </TableHead>
 
                     <TableBody>
-                        {services.map((service) => (
-                            <TableRow key={service._id}>
+                        {plans.map((plan) => (
+                            <TableRow key={plan._id}>
 
-                                <TableCell align="left">
+                                <TableCell>
                                     <Switch
-                                        checked={service.active}
-                                        onChange={() =>
-                                            handleToggleActive(service._id, service.active)
-                                        }
+                                        checked={plan.active}
+                                        onChange={() => handleToggleActive(plan._id!, plan.active)}
                                         color="primary"
                                     />
                                 </TableCell>
 
-                                <TableCell align="center">
-                                    {nameFormatter(service.owner)}
-                                </TableCell>
 
-                                <TableCell>{service.name}</TableCell>
+                                <TableCell>{plan.name}</TableCell>
 
-                                <TableCell sx={{ maxWidth: 300 }}>
-                                    {service.description}
-                                </TableCell>
+                                <TableCell align="center">{periodFormatter(plan.period)}</TableCell>
 
                                 <TableCell align="center">
-                                    <Chip label={service.category.name} color="primary" />
+                                    {plan.price.toLocaleString()}
                                 </TableCell>
 
-                                <TableCell align="center">
-                                    <Stack direction="row" spacing={1} flexWrap="wrap" justifyContent="center">
-                                        {service.plans.map((p) => (
-                                            <Tooltip key={p._id} title={`${p.name}: ${p.price} ${p.currency}`}>
-                                                <Chip label={periodFormatter(p.period)} />
-                                            </Tooltip>
-                                        ))}
-                                    </Stack>
-                                </TableCell>
+                                <TableCell align="center">{plan.currency}</TableCell>
 
                                 <TableCell align="right">
                                     <Tooltip title="Editar">
-                                        <IconButton onClick={() => handleEdit(service._id)}>
+                                        <IconButton onClick={() => handleEdit(plan._id!)}>
                                             <EditIcon />
                                         </IconButton>
                                     </Tooltip>
@@ -154,12 +134,13 @@ export default function ServicesPage() {
                                     <Tooltip title="Eliminar">
                                         <IconButton
                                             color="error"
-                                            onClick={() => handleDelete(service._id)}
+                                            onClick={() => handleDelete(plan._id!)}
                                         >
                                             <DeleteIcon />
                                         </IconButton>
                                     </Tooltip>
                                 </TableCell>
+
                             </TableRow>
                         ))}
                     </TableBody>

@@ -12,10 +12,10 @@ import {
     Typography
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { getPayments } from "../api/services/payments.service";
-import Subtitle from "../Components/Subtitle";
-import { Payment } from "../types";
-import { nameFormatter, paymentMethodFormatter, paymentStatusColorsFormatter, paymentStatusFormatter, periodFormatter } from "../utils";
+import { getPayments } from "../../api/services/payments.service";
+import Subtitle from "../../Components/Subtitle";
+import { Payment } from "../../types";
+import { nameFormatter, paymentMethodFormatter, paymentStatusColorsFormatter, paymentStatusFormatter, periodFormatter } from "../../utils";
 
 
 

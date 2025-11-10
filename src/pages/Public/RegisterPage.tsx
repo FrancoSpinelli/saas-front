@@ -13,7 +13,7 @@ import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { register } from "../api/services";
+import { register } from "../../api/services";
 
 interface RegisterData {
     firstName: string;
