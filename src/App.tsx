@@ -1,13 +1,18 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AppLayout from "./AppLayout";
-import HomePage from "./pages/HomePage";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import UsersPage from "./pages/UsersPage";
+import {
+  CategoriesPage,
+  HomePage,
+  LoginPage,
+  PaymentsPage,
+  PlansPage,
+  RegisterPage,
+  ServicesPage,
+  SubscriptionsPage,
+  UsersPage
+} from "./pages";
 import ProtectedRoute from "./router/ProtectedRoute";
-import CategoriesPage from "./pages/CategoriesPage";
-import ServicesPage from "./pages/ServicesPage";
-import PaymentsPage from "./pages/PaymentPage";
+
 
 
 function App() {
@@ -36,6 +41,12 @@ function App() {
           } />
           <Route path="payments" element={
             <ProtectedRoute><PaymentsPage /></ProtectedRoute>
+          } />
+          <Route path="subscriptions" element={
+            <ProtectedRoute><SubscriptionsPage /></ProtectedRoute>
+          } />
+          <Route path="plans" element={
+            <ProtectedRoute><PlansPage /></ProtectedRoute>
           } />
         </Route>
       </Routes>

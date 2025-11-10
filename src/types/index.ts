@@ -64,6 +64,7 @@ export interface Service {
 	plans: Plan[];
 	owner: User;
 	active: boolean;
+	image?: string;
 }
 
 export interface Subscription {
@@ -73,7 +74,6 @@ export interface Subscription {
 	service: Service;
 	startDate: Date;
 	endDate: Date;
-	paid: boolean;
 }
 
 export interface Payment {
@@ -83,4 +83,5 @@ export interface Payment {
 	subscription: Subscription;
 	plan: Plan;
 	client: User;
+	paidAt: Date;
 }

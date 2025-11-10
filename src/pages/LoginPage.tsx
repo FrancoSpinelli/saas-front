@@ -56,6 +56,7 @@ export default function LoginPage() {
                     lastName: user.lastName,
                     email: user.email,
                     role: user.role,
+                    image: user.image,
                 };
 
                 if (rememberMe) {

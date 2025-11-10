@@ -3,7 +3,8 @@ import axios, {
 	type AxiosRequestConfig,
 	type AxiosResponse,
 } from "axios";
-import { getToken } from "./services";
+import { toast } from "react-toastify";
+import { getToken, logout } from "./services";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
@@ -34,10 +35,19 @@ http.interceptors.request.use(
 );
 
 http.interceptors.response.use(
-	(response: AxiosResponse<ResponseData<any>>) => {
+	(response: AxiosResponse<ResponseData<unknown>>) => {
 		return response;
 	},
-	async (error: AxiosError) => {
+	async (error: AxiosError<ResponseData<unknown>>) => {
+		const message = error.response?.data?.message;
+		if (message === "Token inválido o expirado") {
+			toast.error("Por favor, inicie sesión nuevamente.", {
+				onClose: () => {
+					window.location.href = "/login";
+				},
+			});
+			logout();
+		}
 		return Promise.reject(error);
 	}
 );

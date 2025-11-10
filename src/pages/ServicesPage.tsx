@@ -17,19 +17,19 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    Tooltip,
-    Typography
+    Tooltip
 } from "@mui/material";
 
 
 import { useEffect, useState } from "react";
 import { getServices } from "../api/services";
+import Subtitle from "../Components/Subtitle";
 import { Service } from "../types";
 import { periodFormatter } from "../utils";
 
 export default function ServicesPage() {
     const [services, setServices] = useState<Service[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [, setLoading] = useState(true);
 
     const fetchServices = async () => {
         try {
@@ -66,9 +66,10 @@ export default function ServicesPage() {
     return (
         <Box p={3}>
             <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Typography variant="h5" fontWeight="bold">
+                <Subtitle>
                     Servicios
-                </Typography>
+                </Subtitle>
+
 
                 <Button
                     variant="contained"
@@ -79,7 +80,7 @@ export default function ServicesPage() {
                 </Button>
             </Box>
 
-            <TableContainer component={Paper} sx={{ mt: 3 }}>
+            <TableContainer component={Paper} sx={{ mt: 1 }}>
                 <Table>
                     <TableHead>
                         <TableRow>
@@ -94,48 +95,46 @@ export default function ServicesPage() {
                     </TableHead>
 
                     <TableBody>
-                        {services.map((svc) => (
-                            <TableRow key={svc.id}>
+                        {services.map((service) => (
+                            <TableRow key={service.id}>
 
                                 <TableCell align="left">
                                     <Switch
-                                        checked={svc.active}
+                                        checked={service.active}
                                         onChange={() =>
-                                            handleToggleActive(svc.id, svc.active)
+                                            handleToggleActive(service.id, service.active)
                                         }
                                         color="primary"
                                     />
                                 </TableCell>
 
                                 <TableCell align="center">
-                                    {svc.owner.firstName} {svc.owner.lastName}
+                                    {service.owner.firstName} {service.owner.lastName}
                                 </TableCell>
 
-                                <TableCell>{svc.name}</TableCell>
+                                <TableCell>{service.name}</TableCell>
 
                                 <TableCell sx={{ maxWidth: 300 }}>
-                                    {svc.description}
+                                    {service.description}
                                 </TableCell>
 
                                 <TableCell align="center">
-                                    <Chip label={svc.category.name} color="primary" />
+                                    <Chip label={service.category.name} color="primary" />
                                 </TableCell>
 
                                 <TableCell align="center">
                                     <Stack direction="row" spacing={1} flexWrap="wrap" justifyContent="center">
-                                        {svc.plans.map((p) => (
-                                            <Tooltip key={p.id} title={`${p.price} ${p.currency}`}>
+                                        {service.plans.map((p) => (
+                                            <Tooltip key={p.id} title={`${p.name}: ${p.price} ${p.currency}`}>
                                                 <Chip label={periodFormatter(p.period)} />
                                             </Tooltip>
                                         ))}
                                     </Stack>
                                 </TableCell>
 
-
-
                                 <TableCell align="right">
                                     <Tooltip title="Editar">
-                                        <IconButton onClick={() => handleEdit(svc.id)}>
+                                        <IconButton onClick={() => handleEdit(service.id)}>
                                             <EditIcon />
                                         </IconButton>
                                     </Tooltip>
@@ -143,7 +142,7 @@ export default function ServicesPage() {
                                     <Tooltip title="Eliminar">
                                         <IconButton
                                             color="error"
-                                            onClick={() => handleDelete(svc.id)}
+                                            onClick={() => handleDelete(service.id)}
                                         >
                                             <DeleteIcon />
                                         </IconButton>

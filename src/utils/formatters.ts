@@ -44,3 +44,7 @@ export const paymentMethodFormatter = (method: PaymentMethod): string => {
 
 	return methodMap[method];
 };
+
+export const dateFormatter = (date: Date): string => {
+	return new Date(date).toLocaleDateString("es-AR", { dateStyle: "medium" });
+};

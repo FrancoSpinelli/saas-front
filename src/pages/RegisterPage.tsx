@@ -65,7 +65,7 @@ export default function RegisterPage() {
             } else {
                 setErrors(prev => [...prev, response.message || "Error al registrarse"]);
             }
-        } catch (error) {
+        } catch {
             toast.error("Error al registrarse");
         } finally {
             setLoading(false);

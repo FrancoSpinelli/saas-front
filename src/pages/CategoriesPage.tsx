@@ -12,18 +12,18 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    Tooltip,
-    Typography,
+    Tooltip
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { getCategories } from "../api/services";
+import Subtitle from "../Components/Subtitle";
 import { Category } from "../types";
 import { getInitials } from "../utils";
 
 export default function CategoriesPage() {
 
     const [categories, setCategories] = useState<Category[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [, setLoading] = useState(true);
 
     const fetchCategories = async () => {
         try {
@@ -39,10 +39,6 @@ export default function CategoriesPage() {
     useEffect(() => {
         fetchCategories();
     }, []);
-
-    console.log(categories);
-
-
 
     const handleEdit = (id: string) => {
         console.log("Editar categoría:", id);
@@ -63,9 +59,10 @@ export default function CategoriesPage() {
     return (
         <Box p={3}>
             <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Typography variant="h5" fontWeight="bold">
-                    Categorías
-                </Typography>
+
+                <Subtitle>
+                    Categoría
+                </Subtitle>
 
                 <Button
                     variant="contained"
@@ -76,7 +73,7 @@ export default function CategoriesPage() {
                 </Button>
             </Box>
 
-            <TableContainer component={Paper} sx={{ mt: 3 }}>
+            <TableContainer component={Paper} sx={{ mt: 1 }}>
                 <Table>
                     <TableHead>
                         <TableRow>
@@ -103,8 +100,8 @@ export default function CategoriesPage() {
                                 <TableCell>
                                     <Avatar
                                         variant="rounded"
-                                        src={cat.image || `https://placehold.co/200x200/png?text=${getInitials(cat.name, 2)}`}
-                                        sx={{ width: 56, height: 56 }}
+                                        src={cat.image || `https://placehold.co/100x100/png?text=${getInitials(cat.name, 2)}`}
+                                        sx={{ width: 48, height: 48 }}
                                     />
                                 </TableCell>
 

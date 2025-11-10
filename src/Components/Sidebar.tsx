@@ -1,10 +1,13 @@
-import CategoryIcon from "@mui/icons-material/Category";
-import HomeIcon from "@mui/icons-material/Home";
+import CategoryIcon from "@mui/icons-material/CategoryOutlined";
+import HomeIcon from "@mui/icons-material/HomeOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
+import MonetizationOnOutlined from '@mui/icons-material/MonetizationOnOutlined';
 import PaymentIcon from "@mui/icons-material/Payment";
-import PeopleIcon from "@mui/icons-material/People";
+import PeopleIcon from "@mui/icons-material/PeopleOutline";
+import ShopOutlinedIcon from '@mui/icons-material/ShopOutlined';
 import VideoSettingsIcon from '@mui/icons-material/VideoSettings';
 import {
+  Avatar,
   Box,
   Divider,
   Drawer,
@@ -16,16 +19,19 @@ import {
   Typography,
 } from "@mui/material";
 import { Link, useLocation } from "react-router-dom";
-import { getToken, logout } from "../api/services";
+import { getToken, getUserFromStorage, logout } from "../api/services";
+import { getInitials } from "../utils";
 
 const drawerWidth = 240;
 
 const menuItems = [
   { label: "Inicio", path: "/", icon: <HomeIcon /> },
-  { label: "Servicios", path: "/services", icon: <VideoSettingsIcon /> },
-  { label: "Categorías", path: "/categories", icon: <CategoryIcon /> },
-  { label: "Pagos", path: "/payments", icon: <PaymentIcon /> },
   { label: "Usuarios", path: "/users", icon: <PeopleIcon /> },
+  { label: "Categorías", path: "/categories", icon: <CategoryIcon /> },
+  { label: "Servicios", path: "/services", icon: <VideoSettingsIcon /> },
+  { label: "Planes", path: "/plans", icon: <MonetizationOnOutlined /> },
+  { label: "Subscripciones", path: "/subscriptions", icon: <ShopOutlinedIcon /> },
+  { label: "Pagos", path: "/payments", icon: <PaymentIcon /> },
 ];
 
 export default function Sidebar() {
@@ -41,6 +47,8 @@ export default function Sidebar() {
     return null;
   }
 
+  const profile = getUserFromStorage();
+
   return (
     <Drawer
       variant="permanent"
@@ -55,7 +63,12 @@ export default function Sidebar() {
         },
       }}
     >
-      <Toolbar>
+      <Toolbar sx={{ display: "flex", flexDirection: "column", gap: 1, py: 1 }}>
+        <Avatar
+          variant="rounded"
+          src={profile?.image || `https://placehold.co/100x100/png?text=${getInitials(profile?.firstName + " " + profile?.lastName, 2)}`}
+          sx={{ width: 48, height: 48 }}
+        />
         <Typography variant="h6" noWrap>
           Panel Admin
         </Typography>

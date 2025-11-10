@@ -1,0 +1,9 @@
+export { default as CategoriesPage } from './CategoriesPage';
+export { default as HomePage } from './HomePage';
+export { default as LoginPage } from './LoginPage';
+export { default as PaymentsPage } from './PaymentsPage';
+export { default as PlansPage } from './PlansPage';
+export { default as RegisterPage } from './RegisterPage';
+export { default as ServicesPage } from './ServicesPage';
+export { default as SubscriptionsPage } from './SubscriptionsPage';
+export { default as UsersPage } from './UsersPage';
