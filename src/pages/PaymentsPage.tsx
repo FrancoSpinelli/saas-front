@@ -1,13 +1,7 @@
-import DeleteIcon from "@mui/icons-material/Delete";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import {
     Box,
-    Card,
-    CardContent,
     Chip,
-    IconButton,
     Paper,
-    Stack,
     Table,
     TableBody,
     TableCell,
@@ -21,7 +15,7 @@ import { useEffect, useState } from "react";
 import { getPayments } from "../api/services/payments.service";
 import Subtitle from "../Components/Subtitle";
 import { Payment } from "../types";
-import { paymentMethodFormatter, paymentStatusColorsFormatter, paymentStatusFormatter, periodFormatter } from "../utils";
+import { nameFormatter, paymentMethodFormatter, paymentStatusColorsFormatter, paymentStatusFormatter, periodFormatter } from "../utils";
 
 
 
@@ -66,15 +60,14 @@ export default function PaymentsPage() {
                             <TableCell align="center">Método</TableCell>
                             <TableCell align="center">Estado</TableCell>
                             <TableCell align="center">Fecha de pago</TableCell>
-                            <TableCell align="right">Acciones</TableCell>
                         </TableRow>
                     </TableHead>
 
                     <TableBody>
                         {payments.map((payment) => (
-                            <TableRow key={payment.id}>
+                            <TableRow key={payment._id}>
                                 <TableCell>
-                                    {payment.client.firstName} {payment.client.lastName}
+                                    {nameFormatter(payment.client)}
                                     <Typography variant="body2" color="text.secondary">
                                         {payment.client.email}
                                     </Typography>
@@ -91,7 +84,7 @@ export default function PaymentsPage() {
                                     </Tooltip>
                                 </TableCell>
 
-                                <TableCell align="center">${payment.plan.price}</TableCell>
+                                <TableCell align="center">{payment.plan.price} {payment.plan.currency}</TableCell>
 
                                 <TableCell align="center">
                                     <Chip
@@ -114,23 +107,9 @@ export default function PaymentsPage() {
                                         "es-AR"
                                     )}
                                 </TableCell>
-
-
-
-                                <TableCell align="right">
-                                    <Stack direction="row" spacing={1} justifyContent="flex-end">
-                                        <IconButton onClick={() => (console.log("Ver pago", payment.id))}>
-                                            <VisibilityIcon />
-                                        </IconButton>
-                                        <IconButton color="error" onClick={() => (console.log("Eliminar pago", payment.id))}>
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </Stack>
-                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
-
                 </Table>
             </TableContainer>
         </Box>

@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 import { Link, useLocation } from "react-router-dom";
 import { getToken, getUserFromStorage, logout } from "../api/services";
-import { getInitials } from "../utils";
+import { getInitials, nameFormatter } from "../utils";
 
 const drawerWidth = 240;
 
@@ -48,6 +48,9 @@ export default function Sidebar() {
   }
 
   const profile = getUserFromStorage();
+  if (!profile) {
+    return null;
+  }
 
   return (
     <Drawer
@@ -66,7 +69,7 @@ export default function Sidebar() {
       <Toolbar sx={{ display: "flex", flexDirection: "column", gap: 1, py: 1 }}>
         <Avatar
           variant="rounded"
-          src={profile?.image || `https://placehold.co/100x100/png?text=${getInitials(profile?.firstName + " " + profile?.lastName, 2)}`}
+          src={profile?.image || `https://placehold.co/100x100/png?text=${getInitials(nameFormatter(profile), 2)}`}
           sx={{ width: 48, height: 48 }}
         />
         <Typography variant="h6" noWrap>

@@ -1,23 +1,19 @@
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import {
     Avatar,
     Box,
-    IconButton,
     Paper,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
-    TableRow,
-    Tooltip
+    TableRow
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { getSubscriptions } from "../api/services";
 import Subtitle from "../Components/Subtitle";
 import { Subscription } from "../types";
-import { dateFormatter, getInitials } from "../utils";
+import { dateFormatter, getInitials, nameFormatter } from "../utils";
 
 export default function SubscriptionsPage() {
 
@@ -39,15 +35,6 @@ export default function SubscriptionsPage() {
         fetchSubscriptions();
     }, []);
 
-    const handleEdit = (id: string) => {
-        console.log("Editar subscripción:", id);
-    };
-
-    const handleDelete = (id: string) => {
-        console.log("Eliminar subscripción:", id);
-    };
-
-
     return (
         <Box p={3}>
             <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -64,25 +51,21 @@ export default function SubscriptionsPage() {
                             <TableCell><strong>Cliente</strong></TableCell>
                             <TableCell><strong>Servicio</strong></TableCell>
                             <TableCell><strong>Plan</strong></TableCell>
-                            <TableCell><strong>Fecha Inicio</strong></TableCell>
-                            <TableCell><strong>Fecha Fin</strong></TableCell>
-                            <TableCell align="right"><strong>Acciones</strong></TableCell>
+                            <TableCell align="center"><strong>Desde</strong></TableCell>
+                            <TableCell align="center"><strong>Hasta</strong></TableCell>
                         </TableRow>
                     </TableHead>
 
                     <TableBody>
                         {subscriptions.map((subscription) => (
-                            <TableRow key={subscription.id}>
+                            <TableRow key={subscription._id}>
                                 <TableCell>
                                     <Box display="flex" alignItems="center" gap={1}>
                                         <Avatar
                                             sx={{ width: 40, height: 40 }}
-                                            src={
-                                                subscription.client.image ||
-                                                `https://placehold.co/100x100/png?text=${getInitials(subscription.client.firstName + " " + subscription.client.lastName, 2)}`
-                                            }
+                                            src={subscription.client.image}
                                         />
-                                        {subscription.client.firstName} {subscription.client.lastName}
+                                        {nameFormatter(subscription.client)}
                                     </Box>
                                 </TableCell>
 
@@ -102,28 +85,13 @@ export default function SubscriptionsPage() {
 
                                 <TableCell>{subscription.plan.name}</TableCell>
 
-                                <TableCell>
+                                <TableCell align="center">
                                     {dateFormatter(new Date(subscription.startDate))}
                                 </TableCell>
 
-                                <TableCell>
+                                <TableCell align="center">
                                     {dateFormatter(new Date(subscription.endDate))}
                                 </TableCell>
-
-                                <TableCell align="right">
-                                    <Tooltip title="Editar">
-                                        <IconButton onClick={() => handleEdit(subscription.id)}>
-                                            <EditIcon />
-                                        </IconButton>
-                                    </Tooltip>
-
-                                    <Tooltip title="Eliminar">
-                                        <IconButton color="error" onClick={() => handleDelete(subscription.id)}>
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </Tooltip>
-                                </TableCell>
-
                             </TableRow>
                         ))}
                     </TableBody>

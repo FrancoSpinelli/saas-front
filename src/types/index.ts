@@ -29,7 +29,7 @@ export enum Role {
 }
 
 export interface User {
-	id: string;
+	_id: string;
 	firstName: string;
 	lastName: string;
 	email: string;
@@ -40,7 +40,7 @@ export interface User {
 }
 
 export interface Category {
-	id: string;
+	_id: string;
 	name: string;
 	description: string;
 	image?: string;
@@ -48,7 +48,7 @@ export interface Category {
 }
 
 export interface Plan {
-	id: string;
+	_id: string;
 	name: string;
 	period: Period;
 	price: number;
@@ -57,7 +57,7 @@ export interface Plan {
 }
 
 export interface Service {
-	id: string;
+	_id: string;
 	name: string;
 	description: string;
 	category: Category;
@@ -68,16 +68,17 @@ export interface Service {
 }
 
 export interface Subscription {
-	id: string;
+	_id: string;
 	client: User;
 	plan: Plan;
 	service: Service;
 	startDate: Date;
 	endDate: Date;
+	active: boolean;
 }
 
 export interface Payment {
-	id: string;
+	_id: string;
 	status: PaymentStatus;
 	method: PaymentMethod;
 	subscription: Subscription;

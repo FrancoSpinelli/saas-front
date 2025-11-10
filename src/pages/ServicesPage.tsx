@@ -6,7 +6,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import {
     Box,
     Button,
+    Checkbox,
     Chip,
+    FormControlLabel,
     IconButton,
     Paper,
     Stack,
@@ -22,18 +24,26 @@ import {
 
 
 import { useEffect, useState } from "react";
-import { getServices } from "../api/services";
+import { toast } from "react-toastify";
+import { activeServiceToggle, getServices } from "../api/services";
 import Subtitle from "../Components/Subtitle";
 import { Service } from "../types";
-import { periodFormatter } from "../utils";
+import { nameFormatter, periodFormatter } from "../utils";
 
 export default function ServicesPage() {
+    const [showInactive, setShowInactive] = useState(false);
     const [services, setServices] = useState<Service[]>([]);
     const [, setLoading] = useState(true);
 
     const fetchServices = async () => {
         try {
             const res = await getServices();
+            const services = res.data;
+            if (!showInactive) {
+                const activeServices = services.filter((s: Service) => s.active);
+                setServices(activeServices);
+                return;
+            }
             setServices(res.data);
         } catch (error) {
             console.error(error);
@@ -44,7 +54,7 @@ export default function ServicesPage() {
 
     useEffect(() => {
         fetchServices();
-    }, []);
+    }, [showInactive]);
 
 
     const handleEdit = (id: string) => {
@@ -59,10 +69,13 @@ export default function ServicesPage() {
         console.log("Crear servicio");
     };
 
-    const handleToggleActive = (id: string, currentState: boolean) => {
-        console.log("Toggle servicio:", id, currentState);
+    const handleToggleActive = async (id: string, currentState: boolean) => {
+        const response = await activeServiceToggle(id);
+        if (response.success) {
+            toast.success(`Servicio ${currentState ? "desactivado" : "activado"} exitosamente`);
+            fetchServices();
+        }
     };
-
     return (
         <Box p={3}>
             <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -79,7 +92,6 @@ export default function ServicesPage() {
                     Nuevo Servicio
                 </Button>
             </Box>
-
             <TableContainer component={Paper} sx={{ mt: 1 }}>
                 <Table>
                     <TableHead>
@@ -96,20 +108,20 @@ export default function ServicesPage() {
 
                     <TableBody>
                         {services.map((service) => (
-                            <TableRow key={service.id}>
+                            <TableRow key={service._id}>
 
                                 <TableCell align="left">
                                     <Switch
                                         checked={service.active}
                                         onChange={() =>
-                                            handleToggleActive(service.id, service.active)
+                                            handleToggleActive(service._id, service.active)
                                         }
                                         color="primary"
                                     />
                                 </TableCell>
 
                                 <TableCell align="center">
-                                    {service.owner.firstName} {service.owner.lastName}
+                                    {nameFormatter(service.owner)}
                                 </TableCell>
 
                                 <TableCell>{service.name}</TableCell>
@@ -125,7 +137,7 @@ export default function ServicesPage() {
                                 <TableCell align="center">
                                     <Stack direction="row" spacing={1} flexWrap="wrap" justifyContent="center">
                                         {service.plans.map((p) => (
-                                            <Tooltip key={p.id} title={`${p.name}: ${p.price} ${p.currency}`}>
+                                            <Tooltip key={p._id} title={`${p.name}: ${p.price} ${p.currency}`}>
                                                 <Chip label={periodFormatter(p.period)} />
                                             </Tooltip>
                                         ))}
@@ -134,7 +146,7 @@ export default function ServicesPage() {
 
                                 <TableCell align="right">
                                     <Tooltip title="Editar">
-                                        <IconButton onClick={() => handleEdit(service.id)}>
+                                        <IconButton onClick={() => handleEdit(service._id)}>
                                             <EditIcon />
                                         </IconButton>
                                     </Tooltip>
@@ -142,7 +154,7 @@ export default function ServicesPage() {
                                     <Tooltip title="Eliminar">
                                         <IconButton
                                             color="error"
-                                            onClick={() => handleDelete(service.id)}
+                                            onClick={() => handleDelete(service._id)}
                                         >
                                             <DeleteIcon />
                                         </IconButton>
@@ -151,9 +163,19 @@ export default function ServicesPage() {
                             </TableRow>
                         ))}
                     </TableBody>
-
                 </Table>
             </TableContainer>
+            <Box mt={2} display="flex" justifyContent="flex-end">
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={showInactive}
+                            onChange={(e) => setShowInactive(e.target.checked)}
+                        />
+                    }
+                    label="Mostrar inactivos"
+                />
+            </Box>
         </Box>
     );
 }

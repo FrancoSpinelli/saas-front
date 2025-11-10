@@ -1,4 +1,4 @@
-import { PaymentMethod, PaymentStatus, Period } from "../types";
+import { PaymentMethod, PaymentStatus, Period, User } from "../types";
 
 export const paymentStatusFormatter = (status: PaymentStatus): string => {
 	const statusMap: Record<PaymentStatus, string> = {
@@ -47,4 +47,8 @@ export const paymentMethodFormatter = (method: PaymentMethod): string => {
 
 export const dateFormatter = (date: Date): string => {
 	return new Date(date).toLocaleDateString("es-AR", { dateStyle: "medium" });
+};
+
+export const nameFormatter = (user: User): string => {
+	return `${user.firstName} ${user.lastName}`;
 };

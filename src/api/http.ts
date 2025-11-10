@@ -68,3 +68,12 @@ export async function apiPost<T>(
 	const response = await http.post<ResponseData<T>>(url, data, config);
 	return response.data;
 }
+
+export async function apiPatch<T>(
+	url: string,
+	data?: unknown,
+	config?: AxiosRequestConfig
+): Promise<ResponseData<T>> {
+	const response = await http.patch<ResponseData<T>>(url, data, config);
+	return response.data;
+}

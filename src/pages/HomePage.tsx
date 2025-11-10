@@ -12,13 +12,24 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 
-import { getPayments, getServices, getSubscriptions, getUserFromStorage } from "../api/services";
-import Subtitle from "../Components/Subtitle";
+import {
+    getPayments,
+    getServices,
+    getSubscriptions,
+    getUserFromStorage,
+} from "../api/services";
+
 import { Payment, Service, Subscription } from "../types";
-import { dateFormatter, paymentMethodFormatter, periodFormatter } from "../utils";
+import {
+    dateFormatter,
+    nameFormatter,
+    paymentMethodFormatter,
+    periodFormatter,
+} from "../utils";
+
+import Subtitle from "../Components/Subtitle";
 
 export default function HomePage() {
-
     const [loading, setLoading] = useState(true);
     const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
     const [services, setServices] = useState<Service[]>([]);
@@ -45,7 +56,6 @@ export default function HomePage() {
         }
     };
 
-
     const fetchSubscriptions = async () => {
         try {
             const res = await getSubscriptions();
@@ -53,8 +63,7 @@ export default function HomePage() {
         } catch (error) {
             console.error(error);
         }
-    }
-
+    };
 
     const fetchPayments = async () => {
         try {
@@ -65,7 +74,6 @@ export default function HomePage() {
         }
     };
 
-
     useEffect(() => {
         Promise.all([
             fetchServices(),
@@ -73,7 +81,6 @@ export default function HomePage() {
             fetchPayments(),
         ]).finally(() => setLoading(false));
     }, []);
-
 
     if (loading) {
         return (
@@ -86,51 +93,92 @@ export default function HomePage() {
     return (
         <Box p={3}>
             <Typography variant="h4" mb={2}>
-                Bienvenido, {currentUser.firstName} {currentUser.lastName}
+                Bienvenido, {nameFormatter(currentUser)}
             </Typography>
 
             {subscriptions
-                .filter((sub) => !sub.endDate || new Date(sub.endDate) < new Date())
+                .filter(
+                    (sub) =>
+                        !sub.endDate || new Date(sub.endDate) < new Date()
+                )
                 .map((sub) => (
-                    <Alert severity="warning" sx={{ mb: 2 }} key={sub.id}>
-                        Tu suscripción a <strong>{sub.service.name}</strong> está vencida o impaga.
+                    <Alert severity="warning" sx={{ mb: 2 }} key={sub._id}>
+                        Tu suscripción a{" "}
+                        <strong>{sub.service.name}</strong> está vencida o
+                        impaga.
                     </Alert>
                 ))}
 
-            <Subtitle>
-                Servicios
-            </Subtitle>
+            <Subtitle>Servicios</Subtitle>
 
             <Grid container spacing={2}>
                 {services.map((service) => (
-                    <Grid key={service.id} sx={{ width: 600 }}>
-                        <Card>
+                    <Grid key={service._id} sx={{ width: 600 }}>
+                        <Card
+                            sx={{
+                                borderRadius: 3,
+                                p: 1,
+                                boxShadow: "0px 4px 15px rgba(0,0,0,0.08)",
+                                transition: "0.25s",
+                                "&:hover": {
+                                    transform: "translateY(-4px)",
+                                    boxShadow:
+                                        "0px 6px 20px rgba(0,0,0,0.12)",
+                                },
+                            }}
+                        >
                             <CardContent>
-                                <Stack direction="row" spacing={2} alignItems="center">
+                                <Stack
+                                    direction="row"
+                                    spacing={2}
+                                    alignItems="center"
+                                >
                                     <Avatar
-                                        src={service.category.image}
-                                        alt={service.category.name}
+                                        src={service.image}
+                                        alt={service.name}
                                         sx={{ width: 48, height: 48 }}
                                     />
                                     <Box>
-                                        <Typography variant="h6">{service.name}</Typography>
-                                        <Typography variant="body2" color="text.secondary">
+                                        <Typography
+                                            variant="h6"
+                                            sx={{ fontWeight: 600 }}
+                                        >
+                                            {service.name}
+                                        </Typography>
+                                        <Typography
+                                            variant="body2"
+                                            color="text.secondary"
+                                        >
                                             {service.description}
                                         </Typography>
                                     </Box>
                                 </Stack>
 
-                                <Typography>
-                                    <Stack direction="row" spacing={1} flexWrap="wrap" my={2}>
-                                        {service.plans.map((p) => (
-                                            <Tooltip key={p.id} title={`${p.name}: ${p.price} ${p.currency}`}>
-                                                <Chip label={periodFormatter(p.period)} />
-                                            </Tooltip>
-                                        ))}
-                                    </Stack>
-                                </Typography>
+                                <Stack
+                                    direction="row"
+                                    spacing={1}
+                                    flexWrap="wrap"
+                                    my={2}
+                                >
+                                    {service.plans.map((plan) => (
+                                        <Tooltip
+                                            key={plan._id}
+                                            title={`${plan.name}: ${plan.price} ${plan.currency}`}
+                                        >
+                                            <Chip
+                                                label={periodFormatter(
+                                                    plan.period
+                                                )}
+                                                sx={{ fontSize: "0.75rem" }}
+                                            />
+                                        </Tooltip>
+                                    ))}
+                                </Stack>
 
-                                <Typography variant="caption" color="text.secondary">
+                                <Typography
+                                    variant="caption"
+                                    color="text.secondary"
+                                >
                                     Categoría: {service.category.name}
                                 </Typography>
                             </CardContent>
@@ -139,28 +187,50 @@ export default function HomePage() {
                 ))}
             </Grid>
 
-            <Subtitle>
-                Suscripciones
-            </Subtitle>
+            <Subtitle>Suscripciones</Subtitle>
 
             <Grid container spacing={2}>
-                {subscriptions.map((subscriptions) => (
-                    <Grid key={subscriptions.id} sx={{ width: 600 }}>
-                        <Card>
+                {subscriptions.map((sub) => (
+                    <Grid key={sub._id} sx={{ width: 600 }}>
+                        <Card
+                            sx={{
+                                borderRadius: 3,
+                                p: 1,
+                                boxShadow: "0px 4px 15px rgba(0,0,0,0.08)",
+                                transition: "0.25s",
+                                "&:hover": {
+                                    transform: "translateY(-4px)",
+                                    boxShadow:
+                                        "0px 6px 20px rgba(0,0,0,0.12)",
+                                },
+                            }}
+                        >
                             <CardContent>
-                                <Typography variant="h6">
-                                    {subscriptions.service.name}
+                                <Typography
+                                    variant="h6"
+                                    sx={{ fontWeight: 600 }}
+                                >
+                                    {sub.service.name}
                                 </Typography>
 
                                 <Typography variant="body2" color="text.secondary">
-                                    Plan: {periodFormatter(subscriptions.plan.period)} — ${subscriptions.plan.price} {subscriptions.plan.currency}
+                                    Plan: {periodFormatter(sub.plan.period)} —{" "}
+                                    {sub.plan.price} {sub.plan.currency}
                                 </Typography>
 
                                 <Typography variant="body2" mt={1}>
-                                    <strong>Inicio:</strong> {dateFormatter(subscriptions.startDate)}
+                                    <strong>Cliente:</strong>{" "}
+                                    {nameFormatter(sub.client)}
                                 </Typography>
+
                                 <Typography variant="body2">
-                                    <strong>Fin:</strong> {dateFormatter(subscriptions.endDate)}
+                                    <strong>Inicio:</strong>{" "}
+                                    {dateFormatter(sub.startDate)}
+                                </Typography>
+
+                                <Typography variant="body2">
+                                    <strong>Fin:</strong>{" "}
+                                    {dateFormatter(sub.endDate)}
                                 </Typography>
                             </CardContent>
                         </Card>
@@ -168,39 +238,68 @@ export default function HomePage() {
                 ))}
             </Grid>
 
-            <Subtitle>
-                Últimos Pagos
-            </Subtitle>
+            <Subtitle>Últimos Pagos</Subtitle>
 
             <Grid container spacing={2}>
-                {payments
-                    .slice(0, 5)
-                    .map((payment) => (
-                        <Grid key={payment.id} sx={{ width: 600 }}>
-                            <Card sx={{ height: "100%" }}>
-                                <CardContent>
-                                    <Typography variant="h6" gutterBottom>
-                                        {payment.subscription.service.name}
-                                    </Typography>
+                {payments.slice(0, 5).map((payment) => (
+                    <Grid key={payment._id} sx={{ width: 600 }}>
+                        <Card
+                            sx={{
+                                borderRadius: 3,
+                                p: 1,
+                                boxShadow: "0px 4px 15px rgba(0,0,0,0.08)",
+                                transition: "0.25s",
+                                "&:hover": {
+                                    transform: "translateY(-4px)",
+                                    boxShadow:
+                                        "0px 6px 20px rgba(0,0,0,0.12)",
+                                },
+                            }}
+                        >
+                            <CardContent>
+                                <Typography
+                                    variant="h6"
+                                    sx={{ fontWeight: 600 }}
+                                    gutterBottom
+                                >
+                                    {payment.subscription.service.name}
+                                </Typography>
 
-                                    <Typography variant="body2">
-                                        <strong>Cliente:</strong> {payment.subscription.client.firstName} {payment.subscription.client.lastName}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        <strong>Monto:</strong> ${payment.plan.price} {payment.plan.currency}
-                                    </Typography>
+                                <Typography variant="body2">
+                                    <strong>Cliente:</strong>{" "}
+                                    {
+                                        payment.subscription.client
+                                            .firstName
+                                    }{" "}
+                                    {
+                                        payment.subscription.client
+                                            .lastName
+                                    }
+                                </Typography>
 
-                                    <Typography variant="body2">
-                                        <strong>Método:</strong> {paymentMethodFormatter(payment.method)}
-                                    </Typography>
+                                <Typography variant="body2">
+                                    <strong>Monto:</strong>{" "}
+                                    {payment.plan.price}{" "}
+                                    {payment.plan.currency}
+                                </Typography>
 
-                                    <Typography variant="body2">
-                                        <strong>Fecha de pago:</strong> {new Date(payment.paidAt).toLocaleDateString()}
-                                    </Typography>
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                    ))}
+                                <Typography variant="body2">
+                                    <strong>Método:</strong>{" "}
+                                    {paymentMethodFormatter(
+                                        payment.method
+                                    )}
+                                </Typography>
+
+                                <Typography variant="body2">
+                                    <strong>Fecha de pago:</strong>{" "}
+                                    {new Date(
+                                        payment.paidAt
+                                    ).toLocaleDateString()}
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                ))}
             </Grid>
         </Box>
     );

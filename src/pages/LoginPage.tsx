@@ -49,9 +49,7 @@ export default function LoginPage() {
                 console.log("Login exitoso:", response.data);
 
                 const user = response.data;
-
                 const userInfo = {
-                    id: user.id,
                     firstName: user.firstName,
                     lastName: user.lastName,
                     email: user.email,

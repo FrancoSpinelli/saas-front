@@ -4,6 +4,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import {
     Box,
     Button,
+    Checkbox,
+    FormControlLabel,
     IconButton,
     Paper,
     Switch,
@@ -16,19 +18,27 @@ import {
     Tooltip
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { getPlans } from "../api/services";
+import { toast } from "react-toastify";
+import { activePlanToggle, getPlans } from "../api/services";
 import Subtitle from "../Components/Subtitle";
 import { Plan } from "../types";
 import { periodFormatter } from "../utils";
 
 export default function PlansPage() {
 
+    const [showInactive, setShowInactive] = useState(false);
     const [plans, setPlans] = useState<Plan[]>([]);
     const [, setLoading] = useState(true);
 
     const fetchPlans = async () => {
         try {
             const res = await getPlans();
+            const plans = res.data;
+            if (!showInactive) {
+                const activePlans = plans.filter((p: Plan) => p.active);
+                setPlans(activePlans);
+                return;
+            }
             setPlans(res.data);
         } catch (error) {
             console.error(error);
@@ -39,7 +49,7 @@ export default function PlansPage() {
 
     useEffect(() => {
         fetchPlans();
-    }, []);
+    }, [showInactive]);
 
     const handleEdit = (id: string) => {
         console.log("Editar plan:", id);
@@ -53,8 +63,12 @@ export default function PlansPage() {
         console.log("Crear plan");
     };
 
-    const handleToggleActive = (id: string, state: boolean) => {
-        console.log("Toggle plan:", id, state);
+    const handleToggleActive = async (id: string, currentState: boolean) => {
+        const response = await activePlanToggle(id);
+        if (response.success) {
+            toast.success(`Plan ${currentState ? "desactivado" : "activado"} exitosamente`);
+            fetchPlans();
+        }
     };
 
     return (
@@ -89,12 +103,12 @@ export default function PlansPage() {
 
                     <TableBody>
                         {plans.map((plan) => (
-                            <TableRow key={plan.id}>
+                            <TableRow key={plan._id}>
 
                                 <TableCell>
                                     <Switch
                                         checked={plan.active}
-                                        onChange={() => handleToggleActive(plan.id!, plan.active)}
+                                        onChange={() => handleToggleActive(plan._id!, plan.active)}
                                         color="primary"
                                     />
                                 </TableCell>
@@ -112,7 +126,7 @@ export default function PlansPage() {
 
                                 <TableCell align="right">
                                     <Tooltip title="Editar">
-                                        <IconButton onClick={() => handleEdit(plan.id!)}>
+                                        <IconButton onClick={() => handleEdit(plan._id!)}>
                                             <EditIcon />
                                         </IconButton>
                                     </Tooltip>
@@ -120,7 +134,7 @@ export default function PlansPage() {
                                     <Tooltip title="Eliminar">
                                         <IconButton
                                             color="error"
-                                            onClick={() => handleDelete(plan.id!)}
+                                            onClick={() => handleDelete(plan._id!)}
                                         >
                                             <DeleteIcon />
                                         </IconButton>
@@ -130,9 +144,19 @@ export default function PlansPage() {
                             </TableRow>
                         ))}
                     </TableBody>
-
                 </Table>
             </TableContainer>
+            <Box mt={2} display="flex" justifyContent="flex-end">
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={showInactive}
+                            onChange={(e) => setShowInactive(e.target.checked)}
+                        />
+                    }
+                    label="Mostrar inactivos"
+                />
+            </Box>
         </Box>
     );
 }

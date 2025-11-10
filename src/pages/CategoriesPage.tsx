@@ -3,6 +3,8 @@ import {
     Avatar,
     Box,
     Button,
+    Checkbox,
+    FormControlLabel,
     IconButton,
     Paper,
     Switch,
@@ -15,19 +17,27 @@ import {
     Tooltip
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { getCategories } from "../api/services";
+import { toast } from "react-toastify";
+import { activeCategoryToggle, getCategories } from "../api/services";
 import Subtitle from "../Components/Subtitle";
 import { Category } from "../types";
 import { getInitials } from "../utils";
 
 export default function CategoriesPage() {
 
+    const [showInactive, setShowInactive] = useState(false);
     const [categories, setCategories] = useState<Category[]>([]);
     const [, setLoading] = useState(true);
 
     const fetchCategories = async () => {
         try {
             const res = await getCategories();
+            const categories = res.data;
+            if (!showInactive) {
+                const activeCategories = categories.filter((c: Category) => c.active);
+                setCategories(activeCategories);
+                return;
+            }
             setCategories(res.data);
         } catch (error) {
             console.error(error);
@@ -38,7 +48,7 @@ export default function CategoriesPage() {
 
     useEffect(() => {
         fetchCategories();
-    }, []);
+    }, [showInactive]);
 
     const handleEdit = (id: string) => {
         console.log("Editar categoría:", id);
@@ -52,8 +62,13 @@ export default function CategoriesPage() {
         console.log("Crear categoría");
     };
 
-    const handleToggleActive = (id: string, currentState: boolean) => {
-        console.log("Toggle categoría:", id, currentState);
+
+    const handleToggleActive = async (id: string, currentState: boolean) => {
+        const response = await activeCategoryToggle(id);
+        if (response.success) {
+            toast.success(`Categoría ${currentState ? "desactivada" : "activada"} exitosamente`);
+            fetchCategories();
+        }
     };
 
     return (
@@ -61,7 +76,7 @@ export default function CategoriesPage() {
             <Box display="flex" justifyContent="space-between" alignItems="center">
 
                 <Subtitle>
-                    Categoría
+                    Categorías
                 </Subtitle>
 
                 <Button
@@ -72,7 +87,6 @@ export default function CategoriesPage() {
                     Nueva Categoría
                 </Button>
             </Box>
-
             <TableContainer component={Paper} sx={{ mt: 1 }}>
                 <Table>
                     <TableHead>
@@ -87,12 +101,12 @@ export default function CategoriesPage() {
 
                     <TableBody>
                         {categories.map((cat) => (
-                            <TableRow key={cat.id}>
+                            <TableRow key={cat._id}>
                                 <TableCell align="left">
                                     <Switch
                                         checked={cat.active}
                                         onChange={() =>
-                                            handleToggleActive(cat.id, cat.active)
+                                            handleToggleActive(cat._id, cat.active)
                                         }
                                         color="primary"
                                     />
@@ -111,13 +125,13 @@ export default function CategoriesPage() {
 
                                 <TableCell align="right">
                                     <Tooltip title="Editar">
-                                        <IconButton onClick={() => handleEdit(cat.id)}>
+                                        <IconButton onClick={() => handleEdit(cat._id)}>
                                             <Edit />
                                         </IconButton>
                                     </Tooltip>
 
                                     <Tooltip title="Eliminar">
-                                        <IconButton color="error" onClick={() => handleDelete(cat.id)}>
+                                        <IconButton color="error" onClick={() => handleDelete(cat._id)}>
                                             <Delete />
                                         </IconButton>
                                     </Tooltip>
@@ -125,9 +139,19 @@ export default function CategoriesPage() {
                             </TableRow>
                         ))}
                     </TableBody>
-
                 </Table>
             </TableContainer>
+            <Box mt={2} display="flex" justifyContent="flex-end">
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={showInactive}
+                            onChange={(e) => setShowInactive(e.target.checked)}
+                        />
+                    }
+                    label="Mostrar inactivos"
+                />
+            </Box>
         </Box>
     );
 }
