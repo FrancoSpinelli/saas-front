@@ -34,23 +34,30 @@ export interface User {
 	lastName: string;
 	email: string;
 	role: Role;
+	active: boolean;
+	image?: string;
 	token: string;
 }
 
 export interface Category {
 	id: string;
 	name: string;
+	description: string;
+	image?: string;
 	active: boolean;
 }
 
 export interface Plan {
+	id: string;
 	name: string;
 	period: Period;
 	price: number;
 	active: boolean;
+	currency: Currency;
 }
 
 export interface Service {
+	id: string;
 	name: string;
 	description: string;
 	category: Category;
@@ -60,6 +67,17 @@ export interface Service {
 }
 
 export interface Subscription {
+	id: string;
+	client: User;
+	plan: Plan;
+	service: Service;
+	startDate: Date;
+	endDate: Date;
+	paid: boolean;
+}
+
+export interface Payment {
+	id: string;
 	status: PaymentStatus;
 	method: PaymentMethod;
 	subscription: Subscription;

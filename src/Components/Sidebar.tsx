@@ -3,6 +3,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PaymentIcon from "@mui/icons-material/Payment";
 import PeopleIcon from "@mui/icons-material/People";
+import VideoSettingsIcon from '@mui/icons-material/VideoSettings';
 import {
   Box,
   Divider,
@@ -21,8 +22,8 @@ const drawerWidth = 240;
 
 const menuItems = [
   { label: "Inicio", path: "/", icon: <HomeIcon /> },
+  { label: "Servicios", path: "/services", icon: <VideoSettingsIcon /> },
   { label: "Categorías", path: "/categories", icon: <CategoryIcon /> },
-  { label: "Servicios", path: "/services", icon: <CategoryIcon /> },
   { label: "Pagos", path: "/payments", icon: <PaymentIcon /> },
   { label: "Usuarios", path: "/users", icon: <PeopleIcon /> },
 ];
