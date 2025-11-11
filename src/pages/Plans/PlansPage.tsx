@@ -105,19 +105,23 @@ export default function PlansPage() {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell><strong>Nombre</strong></TableCell>
-                            <TableCell align="center"><strong>Período</strong></TableCell>
-                            <TableCell align="center"><strong>Precio</strong></TableCell>
-                            <TableCell align="center"><strong>Moneda</strong></TableCell>
-                            <TableCell align="right"><strong>Activo</strong></TableCell>
-                            <TableCell align="right"><strong>Acciones</strong></TableCell>
+                            <TableCell sx={{ width: "10%", whiteSpace: "nowrap" }}><strong>Nombre</strong></TableCell>
+                            <TableCell sx={{ width: "10%", whiteSpace: "nowrap" }} align="center"><strong>Período</strong></TableCell>
+                            <TableCell sx={{ width: "10%", whiteSpace: "nowrap" }} align="center"><strong>Precio</strong></TableCell>
+                            <TableCell sx={{ width: "10%", whiteSpace: "nowrap" }} align="center"><strong>Moneda</strong></TableCell>
+                            <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
+                                <strong>Activo</strong>
+                            </TableCell>
+                            <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
+                                <strong>Acciones</strong>
+                            </TableCell>
                         </TableRow>
                     </TableHead>
 
                     <TableBody>
                         {plans.map((plan) => (
                             <TableRow key={plan._id}>
-                                <TableCell>{plan.name}</TableCell>
+                                <TableCell >{plan.name}</TableCell>
 
                                 <TableCell align="center">{periodFormatter(plan.period)}</TableCell>
 
@@ -127,7 +131,7 @@ export default function PlansPage() {
 
                                 <TableCell align="center">{plan.currency}</TableCell>
 
-                                <TableCell align="right">
+                                <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
                                     <Switch
                                         checked={plan.active}
                                         onChange={() => handleToggleActive(plan._id!, plan.active)}
@@ -135,7 +139,7 @@ export default function PlansPage() {
                                     />
                                 </TableCell>
 
-                                <TableCell align="right">
+                                <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
                                     <Tooltip title="Editar">
                                         <IconButton onClick={() => handleEdit(plan._id!)}>
                                             <EditIcon />

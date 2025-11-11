@@ -5,5 +5,4 @@ export interface CreatePlanDTO {
 	period: Period;
 	currency: Currency;
 	price: number;
-	active: boolean;
 }

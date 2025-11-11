@@ -7,7 +7,6 @@ import {
     CssBaseline,
     Grid,
     Link,
-    Switch,
     TextField,
     Typography
 } from "@mui/material";
@@ -26,12 +25,11 @@ export default function CreateOrEditCategoryPage() {
     const navigate = useNavigate();
     const { id } = useParams();
 
-    const isEditMode = Boolean(id)
+    const isEditMode = Boolean(id);
 
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [image, setImage] = useState("");
-    const [active, setActive] = useState(true);
 
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<string[]>([]);
@@ -44,14 +42,12 @@ export default function CreateOrEditCategoryPage() {
         const fetchData = async () => {
             try {
                 const response = await getCategoryById(id!);
-
                 if (response.success) {
-                    const c = response.data;
+                    const category = response.data;
 
-                    setName(c.name);
-                    setDescription(c.description || "");
-                    setImage(c.image || "");
-                    setActive(c.active);
+                    setName(category.name);
+                    setDescription(category.description || "");
+                    setImage(category.image || "");
                 } else {
                     toast.error("No se pudo cargar la categoría");
                 }
@@ -74,7 +70,6 @@ export default function CreateOrEditCategoryPage() {
             name,
             description,
             image: image || undefined,
-            active,
         };
 
         const errors = categoryValidation(category);
@@ -96,7 +91,8 @@ export default function CreateOrEditCategoryPage() {
                 toast.success(isEditMode ? "Categoría actualizada" : "Categoría creada");
                 navigate("/categories");
             } else {
-                setErrors(prev => [...prev, response.message || "Error al guardar"]);
+                toast.error(response.message || "Error inesperado");
+                return;
             }
 
         } catch {
@@ -154,14 +150,6 @@ export default function CreateOrEditCategoryPage() {
                         value={image}
                         onChange={(e) => setImage(e.target.value)}
                     /> */}
-
-                    <Box sx={{ mt: 2, display: "flex", alignItems: "center", justifyContent: "end", gap: 1 }}>
-                        <Typography>Activo</Typography>
-                        <Switch
-                            checked={active}
-                            onChange={(e) => setActive(e.target.checked)}
-                        />
-                    </Box>
 
                     {errors.map((err, index) => (
                         <Alert key={index} severity="error" sx={{ mt: 1 }}>

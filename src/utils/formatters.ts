@@ -1,4 +1,4 @@
-import { PaymentMethod, PaymentStatus, Period, User } from "../types";
+import { PaymentMethod, PaymentStatus, Period, Plan, User } from "../types";
 
 export const paymentStatusFormatter = (status: PaymentStatus): string => {
 	const statusMap: Record<PaymentStatus, string> = {
@@ -51,4 +51,8 @@ export const dateFormatter = (date: Date): string => {
 
 export const nameFormatter = (user: User): string => {
 	return `${user.firstName} ${user.lastName}`;
+};
+
+export const planInfoFormatter = (plan: Plan): string => {
+	return `[${periodFormatter(plan.period)}] ${plan.name}: ${plan.price} ${plan.currency}`;
 };

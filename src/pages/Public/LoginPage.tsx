@@ -1,4 +1,5 @@
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { Alert } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -12,10 +13,11 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useState } from "react";
-import { login } from "../../api/services/auth.service";
 import { toast } from "react-toastify";
+import { login } from "../../api/services/auth.service";
+import { loginValidation } from "../../validations/login.validation";
 
-interface LoginData {
+export interface LoginData {
     email: string;
     password: string;
     rememberMe: boolean;
@@ -29,6 +31,8 @@ export default function LoginPage() {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
 
+    const [errors, setErrors] = useState<string[]>([]);
+
     const passwordRef = React.useRef<HTMLInputElement>(null);
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -36,12 +40,20 @@ export default function LoginPage() {
         event.preventDefault();
 
         setLoading(true);
+        setErrors([]);
 
         const loginData: LoginData = {
             email,
             password,
             rememberMe
         };
+
+        const errors = loginValidation(loginData);
+        if (errors.length > 0) {
+            setErrors(errors);
+            setLoading(false);
+            return;
+        }
 
         try {
             const response = await login(loginData);
@@ -101,10 +113,9 @@ export default function LoginPage() {
                 <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
                     <TextField
                         margin="normal"
-                        required
                         fullWidth
                         id="email"
-                        label="Correo"
+                        label="Correo*"
                         name="email"
                         autoComplete="email"
                         autoFocus
@@ -114,10 +125,9 @@ export default function LoginPage() {
 
                     <TextField
                         margin="normal"
-                        required
                         fullWidth
                         name="password"
-                        label="Contraseña"
+                        label="Contraseña*"
                         type="password"
                         id="password"
                         autoComplete="current-password"
@@ -131,6 +141,12 @@ export default function LoginPage() {
                         label="Recordarme"
                     />
 
+                    {errors.map((err, index) => (
+                        <Alert key={index} severity="error" sx={{ mt: 1 }}>
+                            {err}
+                        </Alert>
+                    ))}
+
                     <Button
                         type="submit"
                         fullWidth
@@ -142,7 +158,7 @@ export default function LoginPage() {
                     </Button>
 
                     <Grid container>
-{/*                         <Grid sx={{ mr: "auto" }}>
+                        {/*                         <Grid sx={{ mr: "auto" }}>
                             <Link href="#" variant="body2">
                                 ¿Olvidaste tu contraseña?
                             </Link>

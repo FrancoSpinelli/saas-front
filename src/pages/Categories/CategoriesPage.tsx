@@ -102,11 +102,15 @@ export default function CategoriesPage() {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell><strong>Imagen</strong></TableCell>
-                            <TableCell><strong>Nombre</strong></TableCell>
-                            <TableCell><strong>Descripción</strong></TableCell>
-                            <TableCell align="center"><strong>Activo</strong></TableCell>
-                            <TableCell align="right"><strong>Acciones</strong></TableCell>
+                            <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }}><strong>Imagen</strong></TableCell>
+                            <TableCell sx={{ width: "5%", whiteSpace: "nowrap" }}><strong>Nombre</strong></TableCell>
+                            <TableCell sx={{ width: "30%", whiteSpace: "nowrap" }}><strong>Descripción</strong></TableCell>
+                            <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
+                                <strong>Activo</strong>
+                            </TableCell>
+                            <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
+                                <strong>Acciones</strong>
+                            </TableCell>
                         </TableRow>
                     </TableHead>
 
@@ -125,7 +129,7 @@ export default function CategoriesPage() {
 
                                 <TableCell>{cat.description}</TableCell>
 
-                                <TableCell align="center">
+                                <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
                                     <Switch
                                         checked={cat.active}
                                         onChange={() =>
@@ -135,7 +139,7 @@ export default function CategoriesPage() {
                                     />
                                 </TableCell>
 
-                                <TableCell align="right">
+                                <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
                                     <Tooltip title="Editar">
                                         <IconButton onClick={() => handleEdit(cat._id)}>
                                             <Edit />

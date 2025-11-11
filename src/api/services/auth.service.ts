@@ -1,7 +1,7 @@
 import type { User } from "../../types";
 import { apiPost } from "../http";
 
-interface Credentials {
+export interface Credentials {
 	email: string;
 	password: string;
 }

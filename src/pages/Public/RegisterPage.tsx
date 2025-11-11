@@ -13,16 +13,22 @@ import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { register } from "../../api/services";
+import { register, registerAdmin } from "../../api/services";
+import { registerValidation } from "../../validations/register.validation";
 
-interface RegisterData {
+export interface RegisterDto {
     firstName: string;
     lastName: string;
     email: string;
     password: string;
+    confirmPassword: string;
 }
 
-export default function RegisterPage() {
+interface RegisterProps {
+    isAdmin?: boolean;
+}
+
+export default function RegisterPage({ isAdmin = false }: RegisterProps) {
     const navigate = useNavigate();
 
     const [firstName, setFirstName] = useState("");
@@ -41,33 +47,43 @@ export default function RegisterPage() {
         setLoading(true);
         setErrors([]);
 
-        if (password !== repeatPassword) {
-            setErrors(prev => [...prev, "Las contraseñas no coinciden"]);
-            setLoading(false);
-            return;
-        }
 
-        const registerData: RegisterData = {
+        const registerData: RegisterDto = {
             firstName,
             lastName,
             email,
             password,
+            confirmPassword: repeatPassword
         };
 
-        try {
-            const response = await register(registerData);
+        const errors = registerValidation(registerData);
+        if (errors.length > 0) {
+            setErrors(errors);
+            setLoading(false);
+            return;
+        }
 
+        try {
+            let response = null;
+            if (isAdmin) {
+                response = await registerAdmin(registerData);
+            } else {
+                response = await register(registerData);
+            }
             if (response.success) {
                 const token = response.data.token;
-                toast.success("Registro exitoso");
-                sessionStorage.setItem("token", token);
-                navigate("/");
+                if (!isAdmin) {
+                    sessionStorage.setItem("token", token);
+                }
+                toast.success("Registro exitoso", { onClose: () => navigate(isAdmin ? "/users" : "/") });
+
             } else {
-                setErrors(prev => [...prev, response.message || "Error al registrarse"]);
+                toast.error(response.message || "Error inesperado");
+                setLoading(false);
+                return;
             }
         } catch {
             toast.error("Error al registrarse");
-        } finally {
             setLoading(false);
         }
     };
@@ -93,11 +109,21 @@ export default function RegisterPage() {
                 </Typography>
 
                 <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+
+                    {isAdmin && (
+                        <TextField
+                            margin="normal"
+                            fullWidth
+                            label="Rol"
+                            value={"Admin"}
+                            disabled
+                        />
+                    )}
+
                     <TextField
                         margin="normal"
-                        required
                         fullWidth
-                        label="Nombre"
+                        label="Nombre*"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
                         autoComplete="given-name"
@@ -105,9 +131,8 @@ export default function RegisterPage() {
 
                     <TextField
                         margin="normal"
-                        required
                         fullWidth
-                        label="Apellido"
+                        label="Apellido*"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
                         autoComplete="family-name"
@@ -115,10 +140,9 @@ export default function RegisterPage() {
 
                     <TextField
                         margin="normal"
-                        required
                         fullWidth
                         id="email"
-                        label="Correo"
+                        label="Correo*"
                         type="email"
                         autoComplete="email"
                         value={email}
@@ -127,22 +151,19 @@ export default function RegisterPage() {
 
                     <TextField
                         margin="normal"
-                        required
                         fullWidth
                         type="password"
-                        label="Contraseña"
+                        label="Contraseña*"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         autoComplete="new-password"
                     />
 
-                    {/* Repetir Contraseña */}
                     <TextField
                         margin="normal"
-                        required
                         fullWidth
                         type="password"
-                        label="Repetir contraseña"
+                        label="Repetir contraseña*"
                         value={repeatPassword}
                         onChange={(e) => setRepeatPassword(e.target.value)}
                         autoComplete="new-password"
@@ -161,21 +182,18 @@ export default function RegisterPage() {
                         sx={{ mt: 3, mb: 2 }}
                         disabled={loading}
                     >
-                        {loading ? "Cargando..." : "Registrarme"}
+                        {loading ? "Cargando..." : isAdmin ? "Crear Usuario" : "Registrarse"}
                     </Button>
 
-                    <Grid container>
-                        <Grid sx={{ mr: "auto" }}>
-                            <Link href="/login" variant="body2">
-                                ¿Ya tenés cuenta? Iniciar sesión
-                            </Link>
+                    {!isAdmin && (
+                        <Grid container justifyContent="right">
+                            <Grid sx={{ mr: "right" }}>
+                                <Link href="/login" variant="body2">
+                                    ¿Ya tenés cuenta? Iniciar sesión
+                                </Link>
+                            </Grid>
                         </Grid>
-                        <Grid sx={{ ml: "auto" }}>
-                            <Link href="#" variant="body2">
-                                ¿Necesitás ayuda?
-                            </Link>
-                        </Grid>
-                    </Grid>
+                    )}
                 </Box>
             </Box>
         </Container>

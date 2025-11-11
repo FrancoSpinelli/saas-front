@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AppLayout from "./AppLayout";
 
+import { ToastContext } from "./Components/Toast";
 import CategoriesPage from "./pages/Categories/CategoriesPage";
 import CreateCategoryPage from "./pages/Categories/CreateOrEditCategoryPage";
 import HomePage from "./pages/Home/HomePage";
@@ -9,6 +10,7 @@ import CreateOrEditPlanPage from "./pages/Plans/CreateOrEditPlanPage";
 import PlansPage from "./pages/Plans/PlansPage";
 import LoginPage from "./pages/Public/LoginPage";
 import RegisterPage from "./pages/Public/RegisterPage";
+import CreateOrEditServicePage from "./pages/Services/CreateOrEditServicePage";
 import ServicesPage from "./pages/Services/ServicesPage";
 import SubscriptionsPage from "./pages/Subscriptions/SubscriptionsPage";
 import UsersPage from "./pages/User/UsersPage";
@@ -33,6 +35,9 @@ function App() {
           <Route path="users" element={
             <ProtectedRoute><UsersPage /></ProtectedRoute>
           } />
+          <Route path="users/create" element={
+            <ProtectedRoute><RegisterPage isAdmin /></ProtectedRoute>
+          } />
           <Route path="categories" element={
             <ProtectedRoute><CategoriesPage /></ProtectedRoute>
           } />
@@ -44,6 +49,12 @@ function App() {
           } />
           <Route path="services" element={
             <ProtectedRoute><ServicesPage /></ProtectedRoute>
+          } />
+          <Route path="services/create" element={
+            <ProtectedRoute><CreateOrEditServicePage /></ProtectedRoute>
+          } />
+          <Route path="services/edit/:id" element={
+            <ProtectedRoute><CreateOrEditServicePage /></ProtectedRoute>
           } />
           <Route path="payments" element={
             <ProtectedRoute><PaymentsPage /></ProtectedRoute>
@@ -62,6 +73,7 @@ function App() {
           } />
         </Route>
       </Routes>
+      <ToastContext />
     </BrowserRouter>
   );
 }

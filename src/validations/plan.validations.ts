@@ -5,11 +5,7 @@ export const planValidation = (plan: CreatePlanDTO) => {
 
 	const { name, period, currency, price } = plan;
 
-	if (!name.trim()) {
-		errors.push("El nombre es obligatorio");
-	}
-
-	if (name.trim().length < 2) {
+	if (!name.trim() || name.trim().length < 2) {
 		errors.push("El nombre debe tener al menos 2 caracteres");
 	}
 

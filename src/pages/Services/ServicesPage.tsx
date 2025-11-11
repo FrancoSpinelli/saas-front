@@ -24,17 +24,20 @@ import {
 
 
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { activeServiceToggle, deleteService, getServices } from "../../api/services";
 import Subtitle from "../../Components/Subtitle";
+import { confirmAlert } from "../../Components/SweetAlert";
 import { Service } from "../../types";
-import { nameFormatter, periodFormatter } from "../../utils";
-import { activeServiceToggle, getServices } from "../../api/services";
+import { periodFormatter } from "../../utils";
 
 export default function ServicesPage() {
+    const navigate = useNavigate();
+
     const [showInactive, setShowInactive] = useState(false);
     const [services, setServices] = useState<Service[]>([]);
     const [, setLoading] = useState(true);
-
 
     const fetchServices = async () => {
         try {
@@ -59,15 +62,25 @@ export default function ServicesPage() {
 
 
     const handleEdit = (id: string) => {
-        console.log("Editar servicio:", id);
+        navigate(`/services/edit/${id}`);
     };
 
     const handleDelete = (id: string) => {
-        console.log("Eliminar servicio:", id);
+        confirmAlert({
+            title: "¿Estás seguro?",
+            text: "Esta acción no se puede deshacer",
+            onConfirm: async () => {
+                const response = await deleteService(id);
+                if (response.success) {
+                    toast.success("Servicio eliminado exitosamente");
+                    fetchServices();
+                }
+            }
+        });
     };
 
     const handleCreate = () => {
-        console.log("Crear servicio");
+        navigate("/services/create");
     };
 
     const handleToggleActive = async (id: string, currentState: boolean) => {
@@ -97,22 +110,22 @@ export default function ServicesPage() {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell align="center"><strong>Autor</strong></TableCell>
                             <TableCell><strong>Nombre</strong></TableCell>
                             <TableCell><strong>Descripción</strong></TableCell>
                             <TableCell align="center"><strong>Categoría</strong></TableCell>
                             <TableCell align="center"><strong>Planes</strong></TableCell>
-                            <TableCell align="center"><strong>Activo</strong></TableCell>
-                            <TableCell align="right"><strong>Acciones</strong></TableCell>
+                            <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
+                                <strong>Activo</strong>
+                            </TableCell>
+                            <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
+                                <strong>Acciones</strong>
+                            </TableCell>
                         </TableRow>
                     </TableHead>
 
                     <TableBody>
                         {services.map((service) => (
                             <TableRow key={service._id}>
-                                <TableCell align="center">
-                                    {nameFormatter(service.owner)}
-                                </TableCell>
 
                                 <TableCell>{service.name}</TableCell>
 
@@ -135,7 +148,7 @@ export default function ServicesPage() {
                                 </TableCell>
 
 
-                                <TableCell align="center">
+                                <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
                                     <Switch
                                         checked={service.active}
                                         onChange={() =>
@@ -145,7 +158,7 @@ export default function ServicesPage() {
                                     />
                                 </TableCell>
 
-                                <TableCell align="right">
+                                <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
                                     <Tooltip title="Editar">
                                         <IconButton onClick={() => handleEdit(service._id)}>
                                             <EditIcon />

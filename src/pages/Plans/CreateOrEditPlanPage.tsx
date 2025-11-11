@@ -8,7 +8,6 @@ import {
     Grid,
     Link,
     MenuItem,
-    Switch,
     TextField,
     Typography
 } from "@mui/material";
@@ -16,7 +15,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import CategoryIcon from "@mui/icons-material/Category"; // Cambialo por cualquier icono de "Plans"
+import CategoryIcon from "@mui/icons-material/Category";
 import { toast } from "react-toastify";
 
 import { createPlan, getPlanById, updatePlan } from "../../api/services";
@@ -36,7 +35,6 @@ export default function CreateOrEditPlanPage() {
     const [period, setPeriod] = useState<Period>(Period.MONTHLY);
     const [price, setPrice] = useState<string>("0");
     const [currency, setCurrency] = useState<Currency>(Currency.USD);
-    const [active, setActive] = useState(true);
 
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<string[]>([]);
@@ -55,7 +53,6 @@ export default function CreateOrEditPlanPage() {
                     setPeriod(plan.period);
                     setPrice(plan.price.toString());
                     setCurrency(plan.currency);
-                    setActive(plan.active);
 
                 } else {
                     toast.error("No se pudo cargar el plan");
@@ -78,7 +75,6 @@ export default function CreateOrEditPlanPage() {
             period,
             price: Number(price),
             currency,
-            active
         };
 
         const errors = planValidation(plan);
@@ -101,7 +97,8 @@ export default function CreateOrEditPlanPage() {
                 toast.success(isEditMode ? "Plan actualizado" : "Plan creado");
                 navigate("/plans");
             } else {
-                setErrors(prev => [...prev, response.message || "Error al guardar"]);
+                toast.error(response.message || "Error inesperado");
+                return;
             }
 
         } catch {
@@ -179,14 +176,6 @@ export default function CreateOrEditPlanPage() {
                         onChange={(e) => setPrice(e.target.value)}
                     />
 
-                    <Box sx={{ mt: 2, display: "flex", alignItems: "center", justifyContent: "end", gap: 1 }}>
-                        <Typography>Activo</Typography>
-                        <Switch
-                            checked={active}
-                            onChange={(e) => setActive(e.target.checked)}
-                        />
-                    </Box>
-
                     {errors.map((err, i) => (
                         <Alert key={i} severity="error" sx={{ mt: 1 }}>
                             {err}
@@ -208,7 +197,6 @@ export default function CreateOrEditPlanPage() {
                             <Link href="/plans" variant="body2">Volver</Link>
                         </Grid>
                     </Grid>
-
                 </Box>
             </Box>
         </Container>
