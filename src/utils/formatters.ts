@@ -1,4 +1,11 @@
-import { PaymentMethod, PaymentStatus, Period, Plan, User } from "../types";
+import {
+	PaymentMethod,
+	PaymentStatus,
+	Period,
+	Plan,
+	SubscriptionStatus,
+	User,
+} from "../types";
 
 export const paymentStatusFormatter = (status: PaymentStatus): string => {
 	const statusMap: Record<PaymentStatus, string> = {
@@ -54,5 +61,34 @@ export const nameFormatter = (user: User): string => {
 };
 
 export const planInfoFormatter = (plan: Plan): string => {
-	return `[${periodFormatter(plan.period)}] ${plan.name}: ${plan.price} ${plan.currency}`;
+	return `[${periodFormatter(plan.period)}] ${plan.name}: ${plan.price} ${
+		plan.currency
+	}`;
 };
+
+export const subscriptionStatusFormatter = (
+	status: SubscriptionStatus
+): string => {
+	const statusMap: Record<SubscriptionStatus, string> = {
+		[SubscriptionStatus.ACTIVE]: "Activo",
+		[SubscriptionStatus.PENDING_PAYMENT]: "Pago Pendiente",
+		[SubscriptionStatus.EXPIRED]: "Expirado",
+		[SubscriptionStatus.CANCELED]: "Cancelado",
+	};
+	return statusMap[status];
+};
+
+export const subscriptionStatusColorsFormatter = (status: SubscriptionStatus) => {
+	const colorMap: Record<
+		SubscriptionStatus,
+		"default" | "primary" | "success" | "error"
+	> = {
+		[SubscriptionStatus.ACTIVE]: "success",
+		[SubscriptionStatus.PENDING_PAYMENT]: "primary",
+		[SubscriptionStatus.EXPIRED]: "error",
+		[SubscriptionStatus.CANCELED]: "default",
+	};
+
+	return colorMap[status];
+};
+

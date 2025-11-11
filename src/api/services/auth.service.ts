@@ -13,6 +13,8 @@ export const login = async (credentials: Credentials) => {
 export const logout = async () => {
 	localStorage.removeItem("token");
 	sessionStorage.removeItem("token");
+	localStorage.removeItem("user");
+	sessionStorage.removeItem("user");
 };
 
 export const register = async (userData: Credentials) => {

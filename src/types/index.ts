@@ -28,6 +28,13 @@ export enum Role {
 	CLIENT = "client",
 }
 
+export enum SubscriptionStatus {
+	ACTIVE = "ACTIVE",
+	PENDING_PAYMENT = "PENDING_PAYMENT",
+	EXPIRED = "EXPIRED",
+	CANCELED = "CANCELED",
+}
+
 export interface User {
 	_id: string;
 	firstName: string;
@@ -74,7 +81,8 @@ export interface Subscription {
 	service: Service;
 	startDate: Date;
 	endDate: Date;
-	active: boolean;
+	status: SubscriptionStatus;
+	lastPaymentDate?: Date;
 }
 
 export interface Payment {
@@ -84,5 +92,7 @@ export interface Payment {
 	subscription: Subscription;
 	plan: Plan;
 	client: User;
+	from: Date;
+	to: Date;
 	paidAt: Date;
 }

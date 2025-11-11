@@ -21,17 +21,24 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import { getToken, getUserFromStorage, logout } from "../api/services";
 import { getInitials, nameFormatter } from "../utils";
+import { Role } from "../types";
 
 const drawerWidth = 240;
 
-const menuItems = [
-  { label: "Inicio", path: "/", icon: <HomeIcon /> },
+const adminMenuItems = [
+  { label: "Inicio", path: "/admin", icon: <HomeIcon /> },
   { label: "Usuarios", path: "/users", icon: <PeopleIcon /> },
   { label: "Categorías", path: "/categories", icon: <CategoryIcon /> },
   { label: "Servicios", path: "/services", icon: <VideoSettingsIcon /> },
   { label: "Planes", path: "/plans", icon: <MonetizationOnOutlined /> },
   { label: "Subscripciones", path: "/subscriptions", icon: <ShopOutlinedIcon /> },
   { label: "Pagos", path: "/payments", icon: <PaymentIcon /> },
+];
+
+const clientMenuItems = [
+  { label: "Inicio", path: "/", icon: <HomeIcon /> },
+  { label: "Mis Subscripciones", path: "/subscriptions", icon: <MonetizationOnOutlined /> },
+  { label: "Mis Pagos", path: "/payments", icon: <PaymentIcon /> },
 ];
 
 export default function Sidebar() {
@@ -47,11 +54,15 @@ export default function Sidebar() {
     return null;
   }
 
+  let isAdmin = false;
   const profile = getUserFromStorage();
   if (!profile) {
     return null;
   }
 
+  isAdmin = profile.role === Role.ADMIN;
+
+  const menuItems = isAdmin ? adminMenuItems : clientMenuItems;
   return (
     <Drawer
       variant="permanent"
@@ -70,12 +81,17 @@ export default function Sidebar() {
         <Avatar
           variant="rounded"
           src={profile?.image || `https://placehold.co/100x100/png?text=${getInitials(nameFormatter(profile), 2)}`}
-          sx={{ width: 48, height: 48 }}
+          sx={{ width: 40, height: 40 }}
         />
-        <Typography variant="h6" noWrap>
-          Panel Admin
+        <Typography variant="body1" noWrap>
+          {isAdmin ? "Panel Admin" : ""} {nameFormatter(profile)}
         </Typography>
       </Toolbar>
+
+      <Divider style={{
+        borderColor: "gray",
+        marginTop: '10px'
+      }} />
 
       <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
         <List sx={{ flexGrow: 1 }}>

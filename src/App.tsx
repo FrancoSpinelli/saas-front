@@ -15,9 +15,15 @@ import ServicesPage from "./pages/Services/ServicesPage";
 import SubscriptionsPage from "./pages/Subscriptions/SubscriptionsPage";
 import UsersPage from "./pages/User/UsersPage";
 import ProtectedRoute from "./router/ProtectedRoute";
+import { Role } from "./types";
+import { getUserFromStorage } from "./api/services";
 
 
 function App() {
+  const user = getUserFromStorage();
+  const _id = user?._id;
+  const isAdmin = user?.role === Role.ADMIN || false;
+
   return (
     <BrowserRouter>
       <Routes>
@@ -25,7 +31,7 @@ function App() {
         <Route path="register" element={<RegisterPage />} />
         <Route path="/" element={<AppLayout />}>
           <Route
-            index
+            path="/admin"
             element={
               <ProtectedRoute>
                 <HomePage />
@@ -56,12 +62,6 @@ function App() {
           <Route path="services/edit/:id" element={
             <ProtectedRoute><CreateOrEditServicePage /></ProtectedRoute>
           } />
-          <Route path="payments" element={
-            <ProtectedRoute><PaymentsPage /></ProtectedRoute>
-          } />
-          <Route path="subscriptions" element={
-            <ProtectedRoute><SubscriptionsPage /></ProtectedRoute>
-          } />
           <Route path="plans" element={
             <ProtectedRoute><PlansPage /></ProtectedRoute>
           } />
@@ -70,6 +70,12 @@ function App() {
           } />
           <Route path="plans/edit/:id" element={
             <ProtectedRoute><CreateOrEditPlanPage /></ProtectedRoute>
+          } />
+          <Route path="payments" element={
+            <ProtectedRoute role={[Role.ADMIN, Role.CLIENT]}><PaymentsPage userId={_id} isAdmin={isAdmin} /></ProtectedRoute>
+          } />
+          <Route path="subscriptions" element={
+            <ProtectedRoute role={[Role.ADMIN, Role.CLIENT]}><SubscriptionsPage userId={_id} isAdmin={isAdmin} /></ProtectedRoute>
           } />
         </Route>
       </Routes>

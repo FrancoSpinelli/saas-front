@@ -15,6 +15,7 @@ import * as React from "react";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { login } from "../../api/services/auth.service";
+import { Role } from "../../types";
 import { loginValidation } from "../../validations/login.validation";
 
 export interface LoginData {
@@ -58,10 +59,9 @@ export default function LoginPage() {
         try {
             const response = await login(loginData);
             if (response.success) {
-                console.log("Login exitoso:", response.data);
-
                 const user = response.data;
                 const userInfo = {
+                    _id: user._id,
                     firstName: user.firstName,
                     lastName: user.lastName,
                     email: user.email,
@@ -76,7 +76,7 @@ export default function LoginPage() {
                     sessionStorage.setItem("token", user.token);
                     sessionStorage.setItem("user", JSON.stringify(userInfo));
                 }
-                window.location.href = "/";
+                window.location.href = user.role === Role.ADMIN ? "/admin" : "/";
             }
         } catch (error: any) {
             setPassword("");
@@ -120,7 +120,7 @@ export default function LoginPage() {
                         autoComplete="email"
                         autoFocus
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => setEmail(e.target.value.trim())}
                     />
 
                     <TextField
