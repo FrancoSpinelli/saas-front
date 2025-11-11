@@ -1,17 +1,18 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AppLayout from "./AppLayout";
 
-import ProtectedRoute from "./router/ProtectedRoute";
 import CategoriesPage from "./pages/Categories/CategoriesPage";
+import CreateCategoryPage from "./pages/Categories/CreateOrEditCategoryPage";
 import HomePage from "./pages/Home/HomePage";
 import PaymentsPage from "./pages/Payments/PaymentsPage";
+import CreateOrEditPlanPage from "./pages/Plans/CreateOrEditPlanPage";
 import PlansPage from "./pages/Plans/PlansPage";
 import LoginPage from "./pages/Public/LoginPage";
 import RegisterPage from "./pages/Public/RegisterPage";
 import ServicesPage from "./pages/Services/ServicesPage";
 import SubscriptionsPage from "./pages/Subscriptions/SubscriptionsPage";
 import UsersPage from "./pages/User/UsersPage";
-import CreateCategoryPage from "./pages/Categories/CreateOrEditCategoryPage";
+import ProtectedRoute from "./router/ProtectedRoute";
 
 
 function App() {
@@ -52,6 +53,12 @@ function App() {
           } />
           <Route path="plans" element={
             <ProtectedRoute><PlansPage /></ProtectedRoute>
+          } />
+          <Route path="plans/create" element={
+            <ProtectedRoute><CreateOrEditPlanPage /></ProtectedRoute>
+          } />
+          <Route path="plans/edit/:id" element={
+            <ProtectedRoute><CreateOrEditPlanPage /></ProtectedRoute>
           } />
         </Route>
       </Routes>

@@ -18,13 +18,16 @@ import {
     Tooltip
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { activePlanToggle, getPlans } from "../../api/services";
+import { activePlanToggle, deletePlan, getPlans } from "../../api/services";
 import Subtitle from "../../Components/Subtitle";
+import { confirmAlert } from "../../Components/SweetAlert";
 import { Plan } from "../../types";
 import { periodFormatter } from "../../utils";
 
 export default function PlansPage() {
+    const navigate = useNavigate();
 
     const [showInactive, setShowInactive] = useState(false);
     const [plans, setPlans] = useState<Plan[]>([]);
@@ -52,15 +55,25 @@ export default function PlansPage() {
     }, [showInactive]);
 
     const handleEdit = (id: string) => {
-        console.log("Editar plan:", id);
+        navigate(`/plans/edit/${id}`);
     };
 
     const handleDelete = (id: string) => {
-        console.log("Eliminar plan:", id);
+        confirmAlert({
+            title: "¿Estás seguro?",
+            text: "Esta acción no se puede deshacer",
+            onConfirm: async () => {
+                const response = await deletePlan(id);
+                if (response.success) {
+                    toast.success("Plan eliminado exitosamente");
+                    fetchPlans();
+                }
+            }
+        });
     };
 
     const handleCreate = () => {
-        console.log("Crear plan");
+        navigate("/plans/create");
     };
 
     const handleToggleActive = async (id: string, currentState: boolean) => {
@@ -92,11 +105,11 @@ export default function PlansPage() {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell><strong>Activo</strong></TableCell>
                             <TableCell><strong>Nombre</strong></TableCell>
                             <TableCell align="center"><strong>Período</strong></TableCell>
                             <TableCell align="center"><strong>Precio</strong></TableCell>
                             <TableCell align="center"><strong>Moneda</strong></TableCell>
+                            <TableCell align="right"><strong>Activo</strong></TableCell>
                             <TableCell align="right"><strong>Acciones</strong></TableCell>
                         </TableRow>
                     </TableHead>
@@ -104,16 +117,6 @@ export default function PlansPage() {
                     <TableBody>
                         {plans.map((plan) => (
                             <TableRow key={plan._id}>
-
-                                <TableCell>
-                                    <Switch
-                                        checked={plan.active}
-                                        onChange={() => handleToggleActive(plan._id!, plan.active)}
-                                        color="primary"
-                                    />
-                                </TableCell>
-
-
                                 <TableCell>{plan.name}</TableCell>
 
                                 <TableCell align="center">{periodFormatter(plan.period)}</TableCell>
@@ -123,6 +126,14 @@ export default function PlansPage() {
                                 </TableCell>
 
                                 <TableCell align="center">{plan.currency}</TableCell>
+
+                                <TableCell align="right">
+                                    <Switch
+                                        checked={plan.active}
+                                        onChange={() => handleToggleActive(plan._id!, plan.active)}
+                                        color="primary"
+                                    />
+                                </TableCell>
 
                                 <TableCell align="right">
                                     <Tooltip title="Editar">

@@ -97,12 +97,12 @@ export default function ServicesPage() {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell align="left"><strong>Activo</strong></TableCell>
                             <TableCell align="center"><strong>Autor</strong></TableCell>
                             <TableCell><strong>Nombre</strong></TableCell>
                             <TableCell><strong>Descripción</strong></TableCell>
                             <TableCell align="center"><strong>Categoría</strong></TableCell>
                             <TableCell align="center"><strong>Planes</strong></TableCell>
+                            <TableCell align="center"><strong>Activo</strong></TableCell>
                             <TableCell align="right"><strong>Acciones</strong></TableCell>
                         </TableRow>
                     </TableHead>
@@ -110,17 +110,6 @@ export default function ServicesPage() {
                     <TableBody>
                         {services.map((service) => (
                             <TableRow key={service._id}>
-
-                                <TableCell align="left">
-                                    <Switch
-                                        checked={service.active}
-                                        onChange={() =>
-                                            handleToggleActive(service._id, service.active)
-                                        }
-                                        color="primary"
-                                    />
-                                </TableCell>
-
                                 <TableCell align="center">
                                     {nameFormatter(service.owner)}
                                 </TableCell>
@@ -143,6 +132,17 @@ export default function ServicesPage() {
                                             </Tooltip>
                                         ))}
                                     </Stack>
+                                </TableCell>
+
+
+                                <TableCell align="center">
+                                    <Switch
+                                        checked={service.active}
+                                        onChange={() =>
+                                            handleToggleActive(service._id, service.active)
+                                        }
+                                        color="primary"
+                                    />
                                 </TableCell>
 
                                 <TableCell align="right">

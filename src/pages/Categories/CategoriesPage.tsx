@@ -56,8 +56,10 @@ export default function CategoriesPage() {
     };
 
     const handleDelete = (id: string) => {
-        confirmAlert("¿Estás seguro?", "Esta acción no se puede deshacer").then(async (confirmed) => {
-            if (confirmed) {
+        confirmAlert({
+            title: "¿Estás seguro?",
+            text: "Esta acción no se puede deshacer",
+            onConfirm: async () => {
                 const response = await deleteCategory(id);
                 if (response.success) {
                     toast.success("Categoría eliminada exitosamente");
@@ -100,10 +102,10 @@ export default function CategoriesPage() {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell align="left"><strong>Activo</strong></TableCell>
                             <TableCell><strong>Imagen</strong></TableCell>
                             <TableCell><strong>Nombre</strong></TableCell>
                             <TableCell><strong>Descripción</strong></TableCell>
+                            <TableCell align="center"><strong>Activo</strong></TableCell>
                             <TableCell align="right"><strong>Acciones</strong></TableCell>
                         </TableRow>
                     </TableHead>
@@ -111,15 +113,6 @@ export default function CategoriesPage() {
                     <TableBody>
                         {categories.map((cat) => (
                             <TableRow key={cat._id}>
-                                <TableCell align="left">
-                                    <Switch
-                                        checked={cat.active}
-                                        onChange={() =>
-                                            handleToggleActive(cat._id, cat.active)
-                                        }
-                                        color="primary"
-                                    />
-                                </TableCell>
                                 <TableCell>
                                     <Avatar
                                         variant="rounded"
@@ -131,6 +124,16 @@ export default function CategoriesPage() {
                                 <TableCell>{cat.name}</TableCell>
 
                                 <TableCell>{cat.description}</TableCell>
+
+                                <TableCell align="center">
+                                    <Switch
+                                        checked={cat.active}
+                                        onChange={() =>
+                                            handleToggleActive(cat._id, cat.active)
+                                        }
+                                        color="primary"
+                                    />
+                                </TableCell>
 
                                 <TableCell align="right">
                                     <Tooltip title="Editar">

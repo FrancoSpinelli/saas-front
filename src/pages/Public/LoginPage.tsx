@@ -142,11 +142,11 @@ export default function LoginPage() {
                     </Button>
 
                     <Grid container>
-                        <Grid sx={{ mr: "auto" }}>
+{/*                         <Grid sx={{ mr: "auto" }}>
                             <Link href="#" variant="body2">
                                 ¿Olvidaste tu contraseña?
                             </Link>
-                        </Grid>
+                        </Grid> */}
                         <Grid sx={{ ml: "auto" }}>
                             <Link href="/register" variant="body2">
                                 {"¿No tenés cuenta? Registrate"}

@@ -74,24 +74,17 @@ export default function UsersPage() {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell><strong>Activo</strong></TableCell>
                             <TableCell><strong>Avatar</strong></TableCell>
                             <TableCell><strong>Nombre</strong></TableCell>
                             <TableCell><strong>Correo</strong></TableCell>
                             <TableCell align="center"><strong>Rol</strong></TableCell>
+                            <TableCell align="center"><strong>Activo</strong></TableCell>
                             <TableCell align="right"><strong>Acciones</strong></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {users.map((user) => (
                             <TableRow key={user._id} hover>
-                                <TableCell>
-                                    <Switch
-                                        checked={user.active}
-                                        onChange={() => handleToggleActive(user._id, user.active)}
-                                        color="primary"
-                                    />
-                                </TableCell>
                                 <TableCell>
                                     <Avatar
                                         src={user.image}
@@ -109,6 +102,14 @@ export default function UsersPage() {
                                         label={user.role === Role.ADMIN ? "Admin" : "Cliente"}
                                         color={user.role === Role.ADMIN ? "primary" : "default"}
                                         size="small"
+                                    />
+                                </TableCell>
+
+                                <TableCell align="center">
+                                    <Switch
+                                        checked={user.active}
+                                        onChange={() => handleToggleActive(user._id, user.active)}
+                                        color="primary"
                                     />
                                 </TableCell>
 
