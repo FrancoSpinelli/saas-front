@@ -130,7 +130,7 @@ export default function ServicesPage() {
                                 <TableCell>{service.name}</TableCell>
 
                                 <TableCell sx={{ maxWidth: 300 }}>
-                                    {service.description}
+                                    {service.shortDescription}
                                 </TableCell>
 
                                 <TableCell align="center">

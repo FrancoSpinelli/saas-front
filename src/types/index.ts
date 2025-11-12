@@ -66,7 +66,8 @@ export interface Plan {
 export interface Service {
 	_id: string;
 	name: string;
-	description: string;
+	shortDescription: string;
+	longDescription: string;
 	category: Category;
 	plans: Plan[];
 	owner: User;

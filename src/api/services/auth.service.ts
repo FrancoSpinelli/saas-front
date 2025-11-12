@@ -10,7 +10,7 @@ export const login = async (credentials: Credentials) => {
 	return apiPost<User>("/auth/sign-in", credentials);
 };
 
-export const logout = async () => {
+export const removeDataFromStorage = () => {
 	localStorage.removeItem("token");
 	sessionStorage.removeItem("token");
 	localStorage.removeItem("user");

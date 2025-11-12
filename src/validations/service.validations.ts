@@ -3,14 +3,18 @@ import { CreateServiceDTO } from "../types/dto";
 export const serviceValidation = (service: CreateServiceDTO) => {
 	const errors: string[] = [];
 
-	const { name, category, plans, image, description } = service;
+	const { name, category, plans, image, shortDescription } = service;
 
-	if (!name.trim() || name.trim().length < 2) {
-		errors.push("El nombre debe tener al menos 2 caracteres");
+	if (!name.trim() || name.trim().length < 2 || name.trim().length > 100) {
+		errors.push("El nombre debe tener entre 2 y 100 caracteres");
 	}
 
-	if (!description || description.trim().length < 5) {
-		errors.push("La descripción debe tener al menos 5 caracteres");
+	if (
+		!shortDescription ||
+		shortDescription.trim().length < 5 ||
+		shortDescription.trim().length > 200
+	) {
+		errors.push("La descripción debe tener entre 5 y 200 caracteres");
 	}
 
 	if (!category) {

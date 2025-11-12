@@ -4,7 +4,7 @@ import axios, {
 	type AxiosResponse,
 } from "axios";
 import { toast } from "react-toastify";
-import { getToken, logout } from "./services";
+import { getToken, removeDataFromStorage } from "./services";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
@@ -46,7 +46,7 @@ http.interceptors.response.use(
 					window.location.href = "/login";
 				},
 			});
-			logout();
+			removeDataFromStorage();
 		}
 		return Promise.reject(error);
 	}

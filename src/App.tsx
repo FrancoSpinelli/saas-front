@@ -1,22 +1,25 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AppLayout from "./AppLayout";
 
+import { getUserFromStorage } from "./api/services";
 import { ToastContext } from "./Components/Toast";
 import CategoriesPage from "./pages/Categories/CategoriesPage";
 import CreateCategoryPage from "./pages/Categories/CreateOrEditCategoryPage";
-import HomePage from "./pages/Home/HomePage";
+import AdminHomePage from "./pages/Home/AdminHomePage";
+import ClientHomePage from "./pages/Home/ClientHomePage";
 import PaymentsPage from "./pages/Payments/PaymentsPage";
 import CreateOrEditPlanPage from "./pages/Plans/CreateOrEditPlanPage";
 import PlansPage from "./pages/Plans/PlansPage";
 import LoginPage from "./pages/Public/LoginPage";
 import RegisterPage from "./pages/Public/RegisterPage";
+import AllServices from "./pages/Services/AllServices";
 import CreateOrEditServicePage from "./pages/Services/CreateOrEditServicePage";
+import ServiceDetailPage from "./pages/Services/ServiceDetailPage";
 import ServicesPage from "./pages/Services/ServicesPage";
 import SubscriptionsPage from "./pages/Subscriptions/SubscriptionsPage";
 import UsersPage from "./pages/User/UsersPage";
 import ProtectedRoute from "./router/ProtectedRoute";
 import { Role } from "./types";
-import { getUserFromStorage } from "./api/services";
 
 
 function App() {
@@ -31,10 +34,18 @@ function App() {
         <Route path="register" element={<RegisterPage />} />
         <Route path="/" element={<AppLayout />}>
           <Route
+            path="/"
+            element={
+              <ProtectedRoute role={[Role.CLIENT]}>
+                <ClientHomePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/admin"
             element={
               <ProtectedRoute>
-                <HomePage />
+                <AdminHomePage />
               </ProtectedRoute>
             }
           />
@@ -77,7 +88,15 @@ function App() {
           <Route path="subscriptions" element={
             <ProtectedRoute role={[Role.ADMIN, Role.CLIENT]}><SubscriptionsPage userId={_id} isAdmin={isAdmin} /></ProtectedRoute>
           } />
+          <Route path="services/all" element={
+            <ProtectedRoute role={[Role.CLIENT]}><AllServices /></ProtectedRoute>
+          } />
+          <Route path="services/:id" element={
+            <ProtectedRoute role={[Role.ADMIN, Role.CLIENT]}
+            ><ServiceDetailPage /></ProtectedRoute>
+          } />
         </Route>
+
       </Routes>
       <ToastContext />
     </BrowserRouter>

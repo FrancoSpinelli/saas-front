@@ -29,7 +29,7 @@ import {
 
 import Subtitle from "../../Components/Subtitle";
 
-export default function HomePage() {
+export default function AdminHomePage() {
     const [loading, setLoading] = useState(true);
     const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
     const [services, setServices] = useState<Service[]>([]);
@@ -98,13 +98,13 @@ export default function HomePage() {
 
             {subscriptions
                 .filter(
-                    (sub) =>
-                        !sub.endDate || new Date(sub.endDate) < new Date()
+                    (subscription) =>
+                        !subscription.endDate || new Date(subscription.endDate) < new Date()
                 )
-                .map((sub) => (
-                    <Alert severity="warning" sx={{ mb: 2 }} key={sub._id}>
+                .map((subscription) => (
+                    <Alert severity="warning" sx={{ mb: 2 }} key={subscription._id}>
                         Tu suscripción a{" "}
-                        <strong>{sub.service.name}</strong> está vencida o
+                        <strong>{subscription.service.name}</strong> está vencida o
                         impaga.
                     </Alert>
                 ))}
@@ -149,7 +149,7 @@ export default function HomePage() {
                                             variant="body2"
                                             color="text.secondary"
                                         >
-                                            {service.description}
+                                            {service.shortDescription}
                                         </Typography>
                                     </Box>
                                 </Stack>

@@ -1,3 +1,4 @@
+import VideoSettingsIcon from "@mui/icons-material/VideoSettings";
 import {
     Avatar,
     Box,
@@ -12,6 +13,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { getSubscriptions } from "../../api/services";
+import EmptyState from "../../Components/EmptyState";
 import Subtitle from "../../Components/Subtitle";
 import { Subscription } from "../../types";
 import { dateFormatter, getInitials, nameFormatter, periodFormatter, subscriptionStatusColorsFormatter, subscriptionStatusFormatter } from "../../utils";
@@ -21,7 +23,7 @@ const AdminView = ({ subscriptions }: { subscriptions: Subscription[] }) =>
     <Box p={3}>
         <Box display="flex" justifyContent="space-between" alignItems="center">
             <Subtitle>
-                Subscripciones
+                Suscripciones
             </Subtitle>
 
         </Box>
@@ -88,78 +90,88 @@ const ClientView = ({ subscriptions }: { subscriptions: Subscription[] }) => {
         <Box p={3}>
             <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Subtitle>
-                    Mis subscripciones
+                    Mis Suscripciones
                 </Subtitle>
 
             </Box>
 
-            <TableContainer component={Paper} sx={{ mt: 1 }}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell><strong>Servicio</strong></TableCell>
-                            <TableCell align="center"><strong>Plan</strong></TableCell>
-                            <TableCell align="center"><strong>Periodo</strong></TableCell>
-                            <TableCell align="center"><strong>Precio</strong></TableCell>
-                            <TableCell align="center"><strong>Desde</strong></TableCell>
-                            <TableCell align="center"><strong>Vencimiento</strong></TableCell>
-                            <TableCell align="center"><strong>Último pago</strong></TableCell>
-                            <TableCell align="center"><strong>Estado</strong></TableCell>
+            {!subscriptions.length ?
+                <EmptyState
+                    message="No tenés suscripciones activas."
+                    buttonLabel="Explorar servicios"
+                    buttonHref="/services/all"
+                    icon={<VideoSettingsIcon />}
+                />
+                :
 
-                        </TableRow>
-                    </TableHead>
+                <TableContainer component={Paper} sx={{ mt: 1 }}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell><strong>Servicio</strong></TableCell>
+                                <TableCell align="center"><strong>Plan</strong></TableCell>
+                                <TableCell align="center"><strong>Periodo</strong></TableCell>
+                                <TableCell align="center"><strong>Precio</strong></TableCell>
+                                <TableCell align="center"><strong>Desde</strong></TableCell>
+                                <TableCell align="center"><strong>Vencimiento</strong></TableCell>
+                                <TableCell align="center"><strong>Último pago</strong></TableCell>
+                                <TableCell align="center"><strong>Estado</strong></TableCell>
 
-                    <TableBody>
-                        {subscriptions.map((subscription) => (
-                            <TableRow key={subscription._id}>
-                                <TableCell>
-                                    <Box display="flex" alignItems="center" gap={1}>
-                                        <Avatar
-                                            variant="rounded"
-                                            sx={{ width: 40, height: 40 }}
-                                            src={
-                                                subscription.service.image ||
-                                                `https://placehold.co/100x100/png?text=${getInitials(subscription.service.name, 2)}`
-                                            }
-                                        />
-                                        {subscription.service.name}
-                                    </Box>
-                                </TableCell>
-
-                                <TableCell align="center">{subscription.plan.name}</TableCell>
-
-                                <TableCell align="center">{periodFormatter(subscription.plan.period)}</TableCell>
-
-                                <TableCell align="center">{subscription.plan.price} {subscription.plan.currency}</TableCell>
-
-                                <TableCell align="center">
-                                    {dateFormatter(new Date(subscription.startDate))}
-                                </TableCell>
-
-                                <TableCell align="center">
-                                    {dateFormatter(new Date(subscription.endDate))}
-                                </TableCell>
-
-                                <TableCell align="center">
-                                    {
-                                        subscription.lastPaymentDate ? dateFormatter(new Date(subscription.lastPaymentDate)) : "-"
-                                    }
-                                </TableCell>
-
-                                <TableCell align="center">
-                                    <Chip
-                                        color={
-                                            subscriptionStatusColorsFormatter(subscription.status)
-                                        }
-                                        label={subscriptionStatusFormatter(subscription.status)}
-                                    />
-                                </TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
+                        </TableHead>
 
-                </Table>
-            </TableContainer>
+                        <TableBody>
+                            {subscriptions.map((subscription) => (
+                                <TableRow key={subscription._id}>
+                                    <TableCell>
+                                        <Box display="flex" alignItems="center" gap={1}>
+                                            <Avatar
+                                                variant="rounded"
+                                                sx={{ width: 40, height: 40 }}
+                                                src={
+                                                    subscription.service.image ||
+                                                    `https://placehold.co/100x100/png?text=${getInitials(subscription.service.name, 2)}`
+                                                }
+                                            />
+                                            {subscription.service.name}
+                                        </Box>
+                                    </TableCell>
+
+                                    <TableCell align="center">{subscription.plan.name}</TableCell>
+
+                                    <TableCell align="center">{periodFormatter(subscription.plan.period)}</TableCell>
+
+                                    <TableCell align="center">{subscription.plan.price} {subscription.plan.currency}</TableCell>
+
+                                    <TableCell align="center">
+                                        {dateFormatter(new Date(subscription.startDate))}
+                                    </TableCell>
+
+                                    <TableCell align="center">
+                                        {dateFormatter(new Date(subscription.endDate))}
+                                    </TableCell>
+
+                                    <TableCell align="center">
+                                        {
+                                            subscription.lastPaymentDate ? dateFormatter(new Date(subscription.lastPaymentDate)) : "-"
+                                        }
+                                    </TableCell>
+
+                                    <TableCell align="center">
+                                        <Chip
+                                            color={
+                                                subscriptionStatusColorsFormatter(subscription.status)
+                                            }
+                                            label={subscriptionStatusFormatter(subscription.status)}
+                                        />
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+
+                    </Table>
+                </TableContainer>
+            }
         </Box>
     );
 };

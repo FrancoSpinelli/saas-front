@@ -13,7 +13,7 @@ import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { register, registerAdmin } from "../../api/services";
+import { register, registerAdmin, removeDataFromStorage } from "../../api/services";
 import { registerValidation } from "../../validations/register.validation";
 
 export interface RegisterDto {
@@ -71,9 +71,20 @@ export default function RegisterPage({ isAdmin = false }: RegisterProps) {
                 response = await register(registerData);
             }
             if (response.success) {
-                const token = response.data.token;
+                removeDataFromStorage();
+                const user = response.data;
                 if (!isAdmin) {
-                    sessionStorage.setItem("token", token);
+                    const userInfo = {
+                        _id: user._id,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        email: user.email,
+                        role: user.role,
+                        image: user.image,
+                    };
+
+                    sessionStorage.setItem("token", user.token);
+                    sessionStorage.setItem("user", JSON.stringify(userInfo));
                 }
                 toast.success("Registro exitoso", { onClose: () => navigate(isAdmin ? "/users" : "/") });
 

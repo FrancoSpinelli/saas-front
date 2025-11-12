@@ -19,7 +19,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Link, useLocation } from "react-router-dom";
-import { getToken, getUserFromStorage, logout } from "../api/services";
+import { getToken, getUserFromStorage, removeDataFromStorage } from "../api/services";
 import { getInitials, nameFormatter } from "../utils";
 import { Role } from "../types";
 
@@ -37,6 +37,7 @@ const adminMenuItems = [
 
 const clientMenuItems = [
   { label: "Inicio", path: "/", icon: <HomeIcon /> },
+  { label: "Explorar Servicios", path: "/services/all", icon: <VideoSettingsIcon /> },
   { label: "Mis Subscripciones", path: "/subscriptions", icon: <MonetizationOnOutlined /> },
   { label: "Mis Pagos", path: "/payments", icon: <PaymentIcon /> },
 ];
@@ -46,7 +47,7 @@ export default function Sidebar() {
 
   const token = getToken();
   const handleLogout = async () => {
-    logout();
+    removeDataFromStorage();
     window.location.href = "/login";
   };
 

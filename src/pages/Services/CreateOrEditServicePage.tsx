@@ -43,7 +43,8 @@ export default function CreateOrEditServicePage() {
     const isEditMode = Boolean(id);
 
     const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
+    const [shortDescription, setShortDescription] = useState("");
+    const [longDescription, setLongDescription] = useState("");
     const [category, setCategory] = useState<Category | null>(null);
     const [plans, setPlans] = useState<Plan[]>([]);
     const [image, setImage] = useState("");
@@ -88,7 +89,7 @@ export default function CreateOrEditServicePage() {
                 const service = res.data;
 
                 setName(service.name);
-                setDescription(service.description);
+                setShortDescription(service.shortDescription);
                 setCategory(service.category || null);
                 setPlans(service.plans || []);
                 setImage(service.image || "");
@@ -108,7 +109,8 @@ export default function CreateOrEditServicePage() {
 
         const service: CreateServiceDTO = {
             name,
-            description,
+            shortDescription,
+            longDescription,
             category: category!,
             plans,
             image: image || undefined,
@@ -174,11 +176,20 @@ export default function CreateOrEditServicePage() {
                         multiline
                         rows={3}
                         label="Descripción*"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
+                        value={shortDescription}
+                        onChange={(e) => setShortDescription(e.target.value)}
                     />
 
-                    {/* CATEGORY */}
+                    <TextField
+                        margin="normal"
+                        fullWidth
+                        multiline
+                        rows={4}
+                        label="Descripción larga*"
+                        value={longDescription}
+                        onChange={(e) => setLongDescription(e.target.value)}
+                    />
+
                     <TextField
                         select
                         margin="normal"
@@ -197,7 +208,7 @@ export default function CreateOrEditServicePage() {
                             </MenuItem>
                         ))}
                     </TextField>
-                    {/* PLANS MULTISELECT */}
+
                     <FormControl margin="normal" fullWidth>
                         <InputLabel>Planes*</InputLabel>
 

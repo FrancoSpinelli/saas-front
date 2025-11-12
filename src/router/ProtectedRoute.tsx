@@ -19,7 +19,13 @@ const ProtectedRoute = ({ children, role = [Role.ADMIN] }: Props) => {
 
 	const userRole = JSON.parse(user).role as Role;
 	if (!role.includes(userRole)) {
-		const to = userRole === Role.ADMIN ? "/admin" : "/";
+		let to = "/login"
+		if (userRole === Role.CLIENT) {
+			to = "/"
+		}
+		if (userRole === Role.ADMIN) {
+			to = "/admin"
+		}
 		return <Navigate to={to} replace />;
 	}
 
