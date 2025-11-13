@@ -97,7 +97,6 @@ export default function ServicesPage() {
                     Servicios
                 </Subtitle>
 
-
                 <Button
                     variant="contained"
                     startIcon={<AddIcon />}
@@ -127,7 +126,15 @@ export default function ServicesPage() {
                         {services.map((service) => (
                             <TableRow key={service._id}>
 
-                                <TableCell>{service.name}</TableCell>
+                                <TableCell>
+                                    <Box display="flex" alignItems="center" gap={1}>
+                                        <strong>
+                                            <a style={{ textDecoration: "underline", color: "inherit" }} href={`/services/${service._id}`}>
+                                                {service.name}
+                                            </a>
+                                        </strong>
+                                    </Box>
+                                </TableCell>
 
                                 <TableCell sx={{ maxWidth: 300 }}>
                                     {service.shortDescription}

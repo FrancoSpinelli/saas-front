@@ -1,3 +1,4 @@
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import CategoryIcon from "@mui/icons-material/CategoryOutlined";
 import HomeIcon from "@mui/icons-material/HomeOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -6,6 +7,7 @@ import PaymentIcon from "@mui/icons-material/Payment";
 import PeopleIcon from "@mui/icons-material/PeopleOutline";
 import ShopOutlinedIcon from '@mui/icons-material/ShopOutlined';
 import VideoSettingsIcon from '@mui/icons-material/VideoSettings';
+
 import {
   Avatar,
   Box,
@@ -20,8 +22,8 @@ import {
 } from "@mui/material";
 import { Link, useLocation } from "react-router-dom";
 import { getToken, getUserFromStorage, removeDataFromStorage } from "../api/services";
-import { getInitials, nameFormatter } from "../utils";
 import { Role } from "../types";
+import { getInitials, nameFormatter } from "../utils";
 
 const drawerWidth = 240;
 
@@ -30,8 +32,8 @@ const adminMenuItems = [
   { label: "Usuarios", path: "/users", icon: <PeopleIcon /> },
   { label: "Categorías", path: "/categories", icon: <CategoryIcon /> },
   { label: "Servicios", path: "/services", icon: <VideoSettingsIcon /> },
-  { label: "Planes", path: "/plans", icon: <MonetizationOnOutlined /> },
   { label: "Subscripciones", path: "/subscriptions", icon: <ShopOutlinedIcon /> },
+  { label: "Planes", path: "/plans", icon: <MonetizationOnOutlined /> },
   { label: "Pagos", path: "/payments", icon: <PaymentIcon /> },
 ];
 
@@ -40,6 +42,7 @@ const clientMenuItems = [
   { label: "Explorar Servicios", path: "/services/all", icon: <VideoSettingsIcon /> },
   { label: "Mis Subscripciones", path: "/subscriptions", icon: <MonetizationOnOutlined /> },
   { label: "Mis Pagos", path: "/payments", icon: <PaymentIcon /> },
+  { label: "Mi Perfil", path: "/profile", icon: <AccountCircleOutlinedIcon /> },
 ];
 
 export default function Sidebar() {

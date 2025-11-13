@@ -1,42 +1,85 @@
 import VideoSettingsIcon from "@mui/icons-material/VideoSettings";
 import {
     Alert,
-    Avatar,
     Box,
     Button,
-    Card,
-    CardContent,
     Grid,
-    Stack,
+    IconButton,
+    Tooltip,
     Typography
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import {
-    getServices,
-    getSubscriptions,
-    getUserFromStorage,
+    getActiveServices,
+    getInterestedServices,
+    getUserProfile
 } from "../../api/services";
 
-import { Service, Subscription } from "../../types";
+import { Service, SubscriptionStatus, UserProfile } from "../../types";
 import {
-    dateFormatter,
-    nameFormatter,
-    periodFormatter,
+    nameFormatter
 } from "../../utils";
 
 import EmptyState from "../../Components/EmptyState";
 import Subtitle from "../../Components/Subtitle";
 import ServiceCard from "../Services/ServiceCard";
 
+import LaunchIcon from '@mui/icons-material/Launch';
+import { useNavigate } from "react-router-dom";
+
 export default function ClientHomePage() {
+
+    const navigate = useNavigate();
+
     const [loading, setLoading] = useState(true);
 
-    const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
-    const [services, setServices] = useState<Service[]>([]);
+    const [user, setUser] = useState<UserProfile | null>(null);
+    const [interestedServices, setInterestedServices] = useState<Service[]>([]);
+    const [activeServices, setActiveServices] = useState<Service[]>([]);
 
-    const currentUser = getUserFromStorage();
+    const fetchUserProfile = async () => {
+        try {
+            const res = await getUserProfile();
+            const user = res.data;
+            setUser(user);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    if (!currentUser) {
+    const fetchInterestedServices = async () => {
+        setLoading(true);
+        try {
+            const res = await getInterestedServices();
+            setInterestedServices(res.data);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchActiveServices = async () => {
+        setLoading(true);
+        try {
+            const res = await getActiveServices();
+            setActiveServices(res.data);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        Promise.all([fetchUserProfile(), fetchInterestedServices(), fetchActiveServices()]);
+    }, []);
+
+
+
+    if (!user) {
         return (
             <Box p={3}>
                 <Typography variant="h6">
@@ -46,26 +89,6 @@ export default function ClientHomePage() {
         );
     }
 
-    const fetchData = async () => {
-        try {
-            const [servicesRes, subsRes] = await Promise.all([
-                getServices(),
-                getSubscriptions(),
-            ]);
-
-            setServices(servicesRes.data);
-            setSubscriptions(subsRes.data.filter(
-                (s: Subscription) => s.client._id === currentUser._id
-            ));
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchData();
-    }, []);
-
     if (loading) {
         return (
             <Box sx={{ textAlign: "center", mt: 5 }}>
@@ -74,25 +97,53 @@ export default function ClientHomePage() {
         );
     }
 
-    const myServiceIds = subscriptions.map((s) => s.service._id);
+    const hasInterestedServices = interestedServices.length;
+    const servicesToShow = hasInterestedServices ? interestedServices : activeServices;
+
+    const pendingPaymentsSubscriptions = user.subscriptions.filter((subscription) =>
+        subscription.status === SubscriptionStatus.PENDING_PAYMENT
+    );
 
     return (
         <Box p={3}>
             <Typography variant="h4" mb={2}>
-                Hola, {nameFormatter(currentUser)} 👋
+                Bienvenido, {nameFormatter(user)}
             </Typography>
 
-            {subscriptions
-                .filter((subscription) => subscription.endDate && new Date(subscription.endDate) < new Date())
-                .map((subscription) => (
-                    <Alert severity="warning" sx={{ mb: 2 }} key={subscription._id}>
-                        Tu suscripción a <strong>{subscription.service.name}</strong> está vencida.
+            {pendingPaymentsSubscriptions.length > 0 &&
+                pendingPaymentsSubscriptions.map((subscription) => (
+                    <Alert
+                        severity="warning"
+                        sx={{
+                            mb: 2,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                        }}
+                        key={subscription._id}
+                        action={
+                            <Tooltip title="Ver servicio">
+                                <IconButton
+                                    color="inherit"
+                                    size="small"
+                                    onClick={() =>
+                                        navigate(`/services/${subscription.service._id}`)
+                                    }
+                                >
+                                    <LaunchIcon fontSize="inherit" />
+                                </IconButton>
+                            </Tooltip>
+                        }
+                    >
+                        Tu suscripción a{" "}
+                        <strong>{subscription.service.name}</strong> está pendiente de pago.
                     </Alert>
-                ))}
+                ))
+            }
 
             <Subtitle>Mis suscripciones</Subtitle>
 
-            {!subscriptions.length ? (
+            {!user.subscriptions.length ? (
                 <EmptyState
                     message="No tenés suscripciones activas."
                     buttonLabel="Explorar servicios"
@@ -100,66 +151,46 @@ export default function ClientHomePage() {
                     icon={<VideoSettingsIcon />}
                 />
             ) : (
-                <Grid container spacing={2} mb={4}>
-                    {subscriptions.map((subscription) => (
-                        <Grid key={subscription._id}>
-                            <Card
-                                sx={{
-                                    borderRadius: 3,
-                                    p: 1,
-                                    height: "100%",
-                                    cursor: "pointer",
-                                    transition: "0.25s",
-                                    "&:hover": {
-                                        transform: "translateY(-4px)",
-                                        boxShadow: "0px 6px 20px rgba(0,0,0,0.12)",
-                                    },
-                                }}
-                            >
-                                <CardContent>
-                                    <Stack direction="row" spacing={2} alignItems="center">
-                                        <Avatar
-                                            src={subscription.service.image}
-                                            alt={subscription.service.name}
-                                            sx={{ width: 48, height: 48 }}
-                                        />
-                                        <Box>
-                                            <Typography variant="h6">
-                                                {subscription.service.name}
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                {subscription.plan.price} {subscription.plan.currency} •{" "}
-                                                {periodFormatter(subscription.plan.period)}
-                                            </Typography>
-                                        </Box>
-                                    </Stack>
-
-                                    <Typography variant="body2" mt={2}>
-                                        <strong>Inicio:</strong>{" "}
-                                        {dateFormatter(subscription.startDate)}
-                                    </Typography>
-
-                                    <Typography variant="body2">
-                                        <strong>Fin:</strong>{" "}
-                                        {dateFormatter(subscription.endDate)}
-                                    </Typography>
-
-                                    <Button
-                                        variant="outlined"
-                                        fullWidth
-                                        sx={{ mt: 2 }}
-                                        onClick={() => (window.location.href = `/services/${subscription.service._id}`)}
-                                    >
-                                        Ver detalles
-                                    </Button>
-                                </CardContent>
-                            </Card>
-                        </Grid>
+                <Grid container spacing={3} justifyContent="center" alignItems="stretch">
+                    {user.subscriptions.map((subscription) => (
+                        <ServiceCard
+                            key={subscription._id}
+                            service={subscription.service}
+                            isSubscribed={true}
+                            subscriptionStatus={subscription.status}
+                        />
                     ))}
                 </Grid>
+
             )}
 
-            <Subtitle>Servicios que te pueden interesar</Subtitle>
+            <Subtitle>Servicios de tu interés</Subtitle>
+            {!hasInterestedServices && (
+                <Alert
+                    severity="info"
+                    sx={{
+                        mb: 2,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                    }}
+                    action={
+                        <Tooltip title="Ver servicio">
+                            <IconButton
+                                color="inherit"
+                                size="small"
+                                onClick={() =>
+                                    navigate(`/profile`)
+                                }
+                            >
+                                <LaunchIcon fontSize="inherit" />
+                            </IconButton>
+                        </Tooltip>
+                    }
+                >
+                    No hay servicios marcados como de tu interés. Puedes agregar servicios a tu lista de interés desde tu perfil.
+                </Alert>
+            )}
 
             <Grid
                 container
@@ -167,11 +198,26 @@ export default function ClientHomePage() {
                 justifyContent="center"
                 alignItems="stretch"
             >
-                {services.map((service) => {
-                    const isSubscribed = myServiceIds.includes(service._id);
+                {servicesToShow.slice(0, 6).map((service) => {
+                    const isSubscribed = user.subscriptions.some(
+                        (subscription) => subscription.service._id === service._id
+                    );
+
+                    if (isSubscribed) return null;
                     return <ServiceCard key={service._id} service={service} isSubscribed={isSubscribed} />;
                 })}
             </Grid>
-        </Box >
+
+            <Button
+                sx={{ mt: 4, mx: "auto", display: "block" }}
+                variant="contained"
+                color="secondary"
+                size="large"
+
+                onClick={() => (window.location.href = "/services/all")}
+            >
+                Ver todos los servicios
+            </Button>
+        </Box>
     );
 }

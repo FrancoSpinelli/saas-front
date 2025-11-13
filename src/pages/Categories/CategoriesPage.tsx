@@ -102,7 +102,6 @@ export default function CategoriesPage() {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }}><strong>Imagen</strong></TableCell>
                             <TableCell sx={{ width: "5%", whiteSpace: "nowrap" }}><strong>Nombre</strong></TableCell>
                             <TableCell sx={{ width: "30%", whiteSpace: "nowrap" }}><strong>Descripción</strong></TableCell>
                             <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
@@ -117,15 +116,7 @@ export default function CategoriesPage() {
                     <TableBody>
                         {categories.map((cat) => (
                             <TableRow key={cat._id}>
-                                <TableCell>
-                                    <Avatar
-                                        variant="rounded"
-                                        src={cat.image || `https://placehold.co/100x100/png?text=${getInitials(cat.name, 2)}`}
-                                        sx={{ width: 48, height: 48 }}
-                                    />
-                                </TableCell>
-
-                                <TableCell>{cat.name}</TableCell>
+                                <TableCell><strong>{cat.name}</strong></TableCell>
 
                                 <TableCell>{cat.description}</TableCell>
 

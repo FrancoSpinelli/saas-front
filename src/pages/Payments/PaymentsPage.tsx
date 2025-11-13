@@ -13,6 +13,7 @@ import {
     Typography
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import { getUserProfile } from '../../api/services';
 import { getPayments } from "../../api/services/payments.service";
 import EmptyState from "../../Components/EmptyState";
 import Subtitle from "../../Components/Subtitle";
@@ -21,19 +22,24 @@ import { dateFormatter, nameFormatter, paymentMethodFormatter, paymentStatusColo
 
 
 interface PaymentsPageProps {
-    userId?: string;
     isAdmin?: boolean;
 }
 
-export default function PaymentsPage({ userId, isAdmin }: PaymentsPageProps) {
+export default function PaymentsPage({ isAdmin }: PaymentsPageProps) {
 
     const [payments, setPayments] = useState<Payment[]>([]);
     const [, setLoading] = useState(true);
 
     const fetchPayments = async () => {
         try {
-            const res = await getPayments(!isAdmin ? userId : undefined);
-            setPayments(res.data);
+
+            if (isAdmin) {
+                const res = await getPayments();
+                setPayments(res.data);
+            } else {
+                const res = await getUserProfile();
+                setPayments(res.data.payments);
+            }
         } catch (error) {
             console.error(error);
         } finally {
@@ -82,7 +88,13 @@ export default function PaymentsPage({ userId, isAdmin }: PaymentsPageProps) {
                                     ) : null}
 
                                     <TableCell>
-                                        {payment.subscription.service.name}
+                                        <Box display="flex" alignItems="center" gap={1}>
+                                            <strong>
+                                                <a style={{ textDecoration: "underline", color: "inherit" }} href={`/services/${payment.subscription.service._id}`}>
+                                                    {payment.subscription.service.name}
+                                                </a>
+                                            </strong>
+                                        </Box>
                                     </TableCell>
 
 

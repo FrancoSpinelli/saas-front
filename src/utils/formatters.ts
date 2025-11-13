@@ -21,9 +21,9 @@ export const paymentStatusFormatter = (status: PaymentStatus): string => {
 export const paymentStatusColorsFormatter = (status: PaymentStatus) => {
 	const colorMap: Record<
 		PaymentStatus,
-		"default" | "primary" | "success" | "error"
+		"default" | "warning" | "success" | "error"
 	> = {
-		[PaymentStatus.PENDING]: "primary",
+		[PaymentStatus.PENDING]: "warning",
 		[PaymentStatus.PAID]: "success",
 		[PaymentStatus.FAILED]: "error",
 		[PaymentStatus.REFUNDED]: "default",
@@ -81,12 +81,12 @@ export const subscriptionStatusFormatter = (
 export const subscriptionStatusColorsFormatter = (status: SubscriptionStatus) => {
 	const colorMap: Record<
 		SubscriptionStatus,
-		"default" | "primary" | "success" | "error"
+		"default" | "warning" | "success" | "error"
 	> = {
 		[SubscriptionStatus.ACTIVE]: "success",
-		[SubscriptionStatus.PENDING_PAYMENT]: "primary",
+		[SubscriptionStatus.PENDING_PAYMENT]: "warning",
 		[SubscriptionStatus.EXPIRED]: "error",
-		[SubscriptionStatus.CANCELED]: "default",
+		[SubscriptionStatus.CANCELED]: "error",
 	};
 
 	return colorMap[status];

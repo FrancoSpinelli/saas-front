@@ -1,8 +1,8 @@
 import { Box, Grid, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { getServices, getSubscriptions, getUserFromStorage } from '../../api/services';
+import { getActiveServices, getUserProfile } from '../../api/services';
 import Subtitle from '../../Components/Subtitle';
-import { Service, Subscription } from '../../types';
+import { Service, Subscription, SubscriptionStatus, UserProfile } from '../../types';
 import ServiceCard from './ServiceCard';
 
 export default function AllServices() {
@@ -10,29 +10,22 @@ export default function AllServices() {
 
     const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
     const [services, setServices] = useState<Service[]>([]);
+    const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
 
-    const currentUser = getUserFromStorage();
-    if (!currentUser) {
-        return (
-            <Box p={3}>
-                <Typography variant="h6">
-                    Por favor, inicia sesión para ver el contenido.
-                </Typography>
-            </Box>
-        );
-    }
 
     const fetchData = async () => {
         try {
             const [servicesRes, subsRes] = await Promise.all([
-                getServices(),
-                getSubscriptions(),
+                getActiveServices(),
+                getUserProfile(),
             ]);
 
-            setServices(servicesRes.data);
-            setSubscriptions(subsRes.data.filter(
-                (s: Subscription) => s.client._id === currentUser._id
-            ));
+            const orderedServices = servicesRes.data.sort((a: Service, b: Service) =>
+                a.name.localeCompare(b.name)
+            );
+
+            setServices(orderedServices);
+            setCurrentUser(subsRes.data);
         } finally {
             setLoading(false);
         }
@@ -53,7 +46,7 @@ export default function AllServices() {
     return (
 
         <Box p={3}>
-            <Subtitle>Servicios disponibles</Subtitle>
+            <Subtitle>Todos los servicios</Subtitle>
 
             <Grid
                 container
@@ -62,9 +55,9 @@ export default function AllServices() {
                 alignItems="stretch"
             >
                 {services.map((service) => {
-                    const isSubscribed = subscriptions.some(
-                        (s) => s.service._id === service._id
-                    );
+                    const isSubscribed = currentUser?.subscriptions.some(
+                        (sub) => sub.service._id === service._id && sub.status === SubscriptionStatus.ACTIVE
+                    ) || false;
                     return <ServiceCard key={service._id} service={service} isSubscribed={isSubscribed} />;
                 })}
             </Grid>

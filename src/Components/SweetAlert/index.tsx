@@ -32,9 +32,11 @@ export const confirmAlert = async ({
     title,
     text,
     onConfirm,
+    cancelButtonText
 }: {
     title: string;
     text: string;
+    cancelButtonText?: string;
     onConfirm?: () => void;
 }): Promise<boolean> => {
     const result = await MySwal.fire({
@@ -45,7 +47,7 @@ export const confirmAlert = async ({
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Continuar',
-        cancelButtonText: 'Cancelar',
+        cancelButtonText: cancelButtonText || 'Cancelar',
     });
 
     if (result.isConfirmed && onConfirm) {

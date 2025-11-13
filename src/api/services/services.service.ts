@@ -6,6 +6,14 @@ export const getServices = async () => {
 	return apiGet<Service[]>("/services");
 };
 
+export const getInterestedServices = async () => {
+	return apiGet<Service[]>("/services/interested");
+};
+
+export const getActiveServices = async () => {
+	return apiGet<Service[]>("/services/active");
+};
+
 export const getServiceById = async (id: string) => {
 	return apiGet<Service>(`/services/${id}`);
 };

@@ -1,12 +1,10 @@
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { Alert } from "@mui/material";
+import { Alert, Checkbox, FormControlLabel } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
 import Container from "@mui/material/Container";
 import CssBaseline from "@mui/material/CssBaseline";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import TextField from "@mui/material/TextField";
@@ -91,26 +89,49 @@ export default function LoginPage() {
     };
 
     return (
-        <Container component="main" maxWidth="xs">
+        <Container
+            component="main"
+            maxWidth="xs"
+            sx={{
+                height: "100vh",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+            }}
+        >
             <CssBaseline />
 
             <Box
                 sx={{
-                    marginTop: 8,
+                    width: "100%",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
+                    textAlign: "center",
                 }}
             >
+                <Typography
+                    variant="h3"
+                    fontWeight={800}
+                    sx={{
+                        mb: 4,
+                        background: "linear-gradient(90deg, #1976d2, #42a5f5)",
+                        backgroundClip: "text",
+                        textFillColor: "transparent",
+                    }}
+                >
+                    My SaaS III
+                </Typography>
+
                 <Avatar sx={{ m: 1 }}>
                     <LockOutlinedIcon />
                 </Avatar>
 
-                <Typography component="h1" variant="h5">
+                <Typography component="h1" variant="h5" sx={{ mb: 2 }}>
                     Iniciar sesión
                 </Typography>
 
-                <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+                <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: "100%" }}>
                     <TextField
                         margin="normal"
                         fullWidth
@@ -136,10 +157,10 @@ export default function LoginPage() {
                         inputRef={passwordRef}
                     />
 
-                    <FormControlLabel
+                    {/* <FormControlLabel
                         control={<Checkbox value="remember" color="primary" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />}
                         label="Recordarme"
-                    />
+                    /> */}
 
                     {errors.map((err, index) => (
                         <Alert key={index} severity="error" sx={{ mt: 1 }}>
@@ -158,11 +179,6 @@ export default function LoginPage() {
                     </Button>
 
                     <Grid container>
-                        {/*                         <Grid sx={{ mr: "auto" }}>
-                            <Link href="#" variant="body2">
-                                ¿Olvidaste tu contraseña?
-                            </Link>
-                        </Grid> */}
                         <Grid sx={{ ml: "auto" }}>
                             <Link href="/register" variant="body2">
                                 {"¿No tenés cuenta? Registrate"}

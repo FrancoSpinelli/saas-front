@@ -90,6 +90,7 @@ export default function CreateOrEditServicePage() {
 
                 setName(service.name);
                 setShortDescription(service.shortDescription);
+                setLongDescription(service.longDescription);
                 setCategory(service.category || null);
                 setPlans(service.plans || []);
                 setImage(service.image || "");
@@ -113,7 +114,7 @@ export default function CreateOrEditServicePage() {
             longDescription,
             category: category!,
             plans,
-            image: image || undefined,
+            image: !image ? `https://placehold.co/500x200?text=${encodeURIComponent(name)}` : undefined,
         };
 
         const validationErrors = serviceValidation(service);

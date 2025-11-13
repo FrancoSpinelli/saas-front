@@ -100,8 +100,16 @@ export default function RegisterPage({ isAdmin = false }: RegisterProps) {
     };
 
     return (
-        <Container component="main" maxWidth="xs">
-            <CssBaseline />
+        <Container
+            component="main"
+            maxWidth="xs"
+            sx={{
+                height: "100vh",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+            }}
+        >            <CssBaseline />
 
             <Box
                 sx={{
@@ -111,6 +119,20 @@ export default function RegisterPage({ isAdmin = false }: RegisterProps) {
                     alignItems: "center",
                 }}
             >
+
+                <Typography
+                    variant="h3"
+                    fontWeight={800}
+                    sx={{
+                        mb: 4,
+                        background: "linear-gradient(90deg, #1976d2, #42a5f5)",
+                        backgroundClip: "text",
+                        textFillColor: "transparent",
+                    }}
+                >
+                    My SaaS III
+                </Typography>
+
                 <Avatar sx={{ m: 1 }}>
                     <LockOutlinedIcon />
                 </Avatar>

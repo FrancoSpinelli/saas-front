@@ -10,6 +10,8 @@ import ClientHomePage from "./pages/Home/ClientHomePage";
 import PaymentsPage from "./pages/Payments/PaymentsPage";
 import CreateOrEditPlanPage from "./pages/Plans/CreateOrEditPlanPage";
 import PlansPage from "./pages/Plans/PlansPage";
+import EditProfilePage from "./pages/Profile/EditProfilePage";
+import ProfilePage from "./pages/Profile/ProfilePage";
 import LoginPage from "./pages/Public/LoginPage";
 import RegisterPage from "./pages/Public/RegisterPage";
 import AllServices from "./pages/Services/AllServices";
@@ -83,10 +85,10 @@ function App() {
             <ProtectedRoute><CreateOrEditPlanPage /></ProtectedRoute>
           } />
           <Route path="payments" element={
-            <ProtectedRoute role={[Role.ADMIN, Role.CLIENT]}><PaymentsPage userId={_id} isAdmin={isAdmin} /></ProtectedRoute>
+            <ProtectedRoute role={[Role.ADMIN, Role.CLIENT]}><PaymentsPage isAdmin={isAdmin} /></ProtectedRoute>
           } />
           <Route path="subscriptions" element={
-            <ProtectedRoute role={[Role.ADMIN, Role.CLIENT]}><SubscriptionsPage userId={_id} isAdmin={isAdmin} /></ProtectedRoute>
+            <ProtectedRoute role={[Role.ADMIN, Role.CLIENT]}><SubscriptionsPage isAdmin={isAdmin} /></ProtectedRoute>
           } />
           <Route path="services/all" element={
             <ProtectedRoute role={[Role.CLIENT]}><AllServices /></ProtectedRoute>
@@ -95,8 +97,15 @@ function App() {
             <ProtectedRoute role={[Role.ADMIN, Role.CLIENT]}
             ><ServiceDetailPage /></ProtectedRoute>
           } />
+          <Route path="profile" element={
+            <ProtectedRoute role={[Role.ADMIN, Role.CLIENT]}
+            ><ProfilePage /></ProtectedRoute>
+          } />
+          <Route path="profile/edit" element={
+            <ProtectedRoute role={[Role.ADMIN, Role.CLIENT]}
+            ><EditProfilePage /></ProtectedRoute>
+          } />
         </Route>
-
       </Routes>
       <ToastContext />
     </BrowserRouter>

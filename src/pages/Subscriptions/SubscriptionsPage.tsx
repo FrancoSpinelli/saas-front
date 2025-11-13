@@ -12,7 +12,7 @@ import {
     TableRow
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { getSubscriptions } from "../../api/services";
+import { getSubscriptions, getUserProfile } from "../../api/services";
 import EmptyState from "../../Components/EmptyState";
 import Subtitle from "../../Components/Subtitle";
 import { Subscription } from "../../types";
@@ -32,11 +32,12 @@ const AdminView = ({ subscriptions }: { subscriptions: Subscription[] }) =>
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell><strong>Cliente</strong></TableCell>
                         <TableCell><strong>Servicio</strong></TableCell>
+                        <TableCell><strong>Cliente</strong></TableCell>
                         <TableCell><strong>Plan</strong></TableCell>
                         <TableCell align="center"><strong>Desde</strong></TableCell>
                         <TableCell align="center"><strong>Hasta</strong></TableCell>
+                        <TableCell align="center"><strong>Estado</strong></TableCell>
                     </TableRow>
                 </TableHead>
 
@@ -45,25 +46,21 @@ const AdminView = ({ subscriptions }: { subscriptions: Subscription[] }) =>
                         <TableRow key={subscription._id}>
                             <TableCell>
                                 <Box display="flex" alignItems="center" gap={1}>
-                                    <Avatar
-                                        sx={{ width: 40, height: 40 }}
-                                        src={subscription.client.image}
-                                    />
-                                    {nameFormatter(subscription.client)}
+                                    <strong>
+                                        <a style={{ textDecoration: "underline", color: "inherit" }} href={`/services/${subscription.service._id}`}>
+                                            {subscription.service.name}
+                                        </a>
+                                    </strong>
                                 </Box>
                             </TableCell>
 
                             <TableCell>
                                 <Box display="flex" alignItems="center" gap={1}>
                                     <Avatar
-                                        variant="rounded"
                                         sx={{ width: 40, height: 40 }}
-                                        src={
-                                            subscription.service.image ||
-                                            `https://placehold.co/100x100/png?text=${getInitials(subscription.service.name, 2)}`
-                                        }
+                                        src={subscription.client.image}
                                     />
-                                    {subscription.service.name}
+                                    {nameFormatter(subscription.client)}
                                 </Box>
                             </TableCell>
 
@@ -75,6 +72,15 @@ const AdminView = ({ subscriptions }: { subscriptions: Subscription[] }) =>
 
                             <TableCell align="center">
                                 {dateFormatter(new Date(subscription.endDate))}
+                            </TableCell>
+
+                            <TableCell align="center">
+                                <Chip
+                                    color={
+                                        subscriptionStatusColorsFormatter(subscription.status)
+                                    }
+                                    label={subscriptionStatusFormatter(subscription.status)}
+                                />
                             </TableCell>
                         </TableRow>
                     ))}
@@ -109,6 +115,7 @@ const ClientView = ({ subscriptions }: { subscriptions: Subscription[] }) => {
                         <TableHead>
                             <TableRow>
                                 <TableCell><strong>Servicio</strong></TableCell>
+                                <TableCell align="center"><strong>Categoría</strong></TableCell>
                                 <TableCell align="center"><strong>Plan</strong></TableCell>
                                 <TableCell align="center"><strong>Periodo</strong></TableCell>
                                 <TableCell align="center"><strong>Precio</strong></TableCell>
@@ -125,16 +132,16 @@ const ClientView = ({ subscriptions }: { subscriptions: Subscription[] }) => {
                                 <TableRow key={subscription._id}>
                                     <TableCell>
                                         <Box display="flex" alignItems="center" gap={1}>
-                                            <Avatar
-                                                variant="rounded"
-                                                sx={{ width: 40, height: 40 }}
-                                                src={
-                                                    subscription.service.image ||
-                                                    `https://placehold.co/100x100/png?text=${getInitials(subscription.service.name, 2)}`
-                                                }
-                                            />
-                                            {subscription.service.name}
+                                            <strong>
+                                                <a style={{ textDecoration: "underline", color: "inherit" }} href={`/services/${subscription.service._id}`}>
+                                                    {subscription.service.name}
+                                                </a>
+                                            </strong>
                                         </Box>
+                                    </TableCell>
+
+                                    <TableCell align="center">
+                                        <Chip label={subscription.service.category.name} color="secondary" />
                                     </TableCell>
 
                                     <TableCell align="center">{subscription.plan.name}</TableCell>
@@ -180,15 +187,20 @@ interface SubscriptionProps {
     isAdmin?: boolean;
 }
 
-export default function SubscriptionsPage({ userId, isAdmin }: SubscriptionProps) {
+export default function SubscriptionsPage({ isAdmin }: SubscriptionProps) {
     const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
     const [, setLoading] = useState(true);
 
 
-    const fetchSubscriptions = async () => {
+    const fetchUserProfile = async () => {
         try {
-            const res = await getSubscriptions(!isAdmin ? userId : undefined);
-            setSubscriptions(res.data);
+            if (isAdmin) {
+                const res = await getSubscriptions();
+                setSubscriptions(res.data);
+            } else {
+                const res = await getUserProfile();
+                setSubscriptions(res.data.subscriptions);
+            }
         } catch (error) {
             console.error(error);
         } finally {
@@ -197,7 +209,7 @@ export default function SubscriptionsPage({ userId, isAdmin }: SubscriptionProps
     };
 
     useEffect(() => {
-        fetchSubscriptions();
+        fetchUserProfile();
     }, []);
 
     if (!isAdmin) {

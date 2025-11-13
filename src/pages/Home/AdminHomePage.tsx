@@ -96,19 +96,6 @@ export default function AdminHomePage() {
                 Bienvenido, {nameFormatter(currentUser)}
             </Typography>
 
-            {subscriptions
-                .filter(
-                    (subscription) =>
-                        !subscription.endDate || new Date(subscription.endDate) < new Date()
-                )
-                .map((subscription) => (
-                    <Alert severity="warning" sx={{ mb: 2 }} key={subscription._id}>
-                        Tu suscripción a{" "}
-                        <strong>{subscription.service.name}</strong> está vencida o
-                        impaga.
-                    </Alert>
-                ))}
-
             <Subtitle>Servicios</Subtitle>
 
             <Grid container spacing={2}>

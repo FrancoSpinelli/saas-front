@@ -1,7 +1,7 @@
 export enum Currency {
 	USD = "USD",
-	EUR = "EUR",
-	ARS = "ARS",
+/* 	EUR = "EUR",
+	ARS = "ARS", */
 }
 
 export enum PaymentMethod {
@@ -43,7 +43,10 @@ export interface User {
 	role: Role;
 	active: boolean;
 	image?: string;
+	description?: string;
 	token: string;
+	paymentMethod: PaymentMethod;
+	createdAt: Date;
 }
 
 export interface Category {
@@ -96,4 +99,11 @@ export interface Payment {
 	from: Date;
 	to: Date;
 	paidAt: Date;
+}
+
+export interface UserProfile extends User {
+	services: Service[];
+	subscriptions: Subscription[];
+	payments: Payment[];
+	interests: Category[];
 }
