@@ -16,7 +16,7 @@ const http = axios.create({
 	},
 });
 
-interface ResponseData<T> {
+export interface ResponseData<T> {
 	data: T;
 	message: string;
 	success: boolean;

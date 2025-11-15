@@ -1,8 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AppLayout from "./AppLayout";
 
-import { getUserFromStorage } from "./api/services";
+import { getUserProfile } from "./api/services";
 import { ToastContext } from "./Components/Toast";
+import { useFetch } from "./hooks/useFetch";
 import CategoriesPage from "./pages/Categories/CategoriesPage";
 import CreateCategoryPage from "./pages/Categories/CreateOrEditCategoryPage";
 import AdminHomePage from "./pages/Home/AdminHomePage";
@@ -25,8 +26,7 @@ import { Role } from "./types";
 
 
 function App() {
-  const user = getUserFromStorage();
-  const _id = user?._id;
+  const { data: user } = useFetch(getUserProfile);
   const isAdmin = user?.role === Role.ADMIN || false;
 
   return (

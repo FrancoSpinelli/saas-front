@@ -1,6 +1,6 @@
 export enum Currency {
 	USD = "USD",
-/* 	EUR = "EUR",
+	/* 	EUR = "EUR",
 	ARS = "ARS", */
 }
 
@@ -96,6 +96,7 @@ export interface Payment {
 	subscription: Subscription;
 	plan: Plan;
 	client: User;
+	amount: number;
 	from: Date;
 	to: Date;
 	paidAt: Date;
@@ -106,4 +107,34 @@ export interface UserProfile extends User {
 	subscriptions: Subscription[];
 	payments: Payment[];
 	interests: Category[];
+}
+
+export interface DashboardData {
+	totalSubscriptions: number;
+	totalAdmins: number;
+	totalClients: number;
+	totalServices: number;
+
+	subscriptionsByCategory: {
+		categoryName: string;
+		total: number;
+	}[];
+
+	activeSubscriptions: number;
+	pendingPaymentSubscriptions: number;
+	canceledSubscriptions: number;
+	expiredSubscriptions: number;
+
+	revenueThisMonth: number;
+	revenueLastMonth: number;
+	totalRevenue: number;
+
+	lastClientSubscriptions: Subscription[];
+
+	lastPayments: Payment[];
+
+	topSubscribedServices: {
+		service: Service;
+		count: number;
+	}[];
 }

@@ -16,7 +16,7 @@ import { getSubscriptions, getUserProfile } from "../../api/services";
 import EmptyState from "../../Components/EmptyState";
 import Subtitle from "../../Components/Subtitle";
 import { Subscription } from "../../types";
-import { dateFormatter, getInitials, nameFormatter, periodFormatter, subscriptionStatusColorsFormatter, subscriptionStatusFormatter } from "../../utils";
+import { dateFormatter, nameFormatter, periodFormatter, subscriptionStatusColorsFormatter, subscriptionStatusFormatter } from "../../utils";
 
 
 const AdminView = ({ subscriptions }: { subscriptions: Subscription[] }) =>
@@ -183,7 +183,6 @@ const ClientView = ({ subscriptions }: { subscriptions: Subscription[] }) => {
     );
 };
 interface SubscriptionProps {
-    userId?: string;
     isAdmin?: boolean;
 }
 

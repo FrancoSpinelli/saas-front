@@ -21,15 +21,16 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import { getCategories, getUserFromStorage, getUserProfile, updateUserProfile } from "../../api/services";
+import { getCategories, getUserProfile, updateUserProfile } from "../../api/services";
+import { useFetch } from "../../hooks/useFetch";
 import { Category, PaymentMethod, UserProfile } from "../../types";
 import { paymentMethodFormatter } from "../../utils";
 
 export default function EditProfilePage() {
     const navigate = useNavigate();
 
-    const storedUser = getUserFromStorage();
-    if (!storedUser) {
+    const { data: user } = useFetch(getUserProfile);
+    if (!user) {
         toast.error("No se encontró el usuario");
         navigate("/login");
         return;
@@ -39,7 +40,6 @@ export default function EditProfilePage() {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const [user, setUser] = useState<UserProfile | null>(null);
     const [categories, setCategories] = useState<Category[]>([]);
 
     const [firstName, setFirstName] = useState("");
@@ -57,7 +57,6 @@ export default function EditProfilePage() {
             ]);
 
             setCategories(catsRes.data);
-            setUser(userRes.data);
             setFirstName(userRes.data.firstName);
             setLastName(userRes.data.lastName);
             setEmail(userRes.data.email);
@@ -255,4 +254,4 @@ export default function EditProfilePage() {
             </Box>
         </Container >
     );
-} 
+}

@@ -21,14 +21,15 @@ import {
   Typography,
 } from "@mui/material";
 import { Link, useLocation } from "react-router-dom";
-import { getToken, getUserFromStorage, removeDataFromStorage } from "../api/services";
+import { getToken, getUserProfile, removeDataFromStorage } from "../api/services";
+import { useFetch } from '../hooks/useFetch';
 import { Role } from "../types";
 import { getInitials, nameFormatter } from "../utils";
 
 const drawerWidth = 240;
 
 const adminMenuItems = [
-  { label: "Inicio", path: "/admin", icon: <HomeIcon /> },
+  { label: "Dashboard", path: "/admin", icon: <HomeIcon /> },
   { label: "Usuarios", path: "/users", icon: <PeopleIcon /> },
   { label: "Categorías", path: "/categories", icon: <CategoryIcon /> },
   { label: "Servicios", path: "/services", icon: <VideoSettingsIcon /> },
@@ -58,13 +59,14 @@ export default function Sidebar() {
     return null;
   }
 
+  const { data: profile } = useFetch(getUserProfile);
   let isAdmin = false;
-  const profile = getUserFromStorage();
+
   if (!profile) {
     return null;
   }
 
-  isAdmin = profile.role === Role.ADMIN;
+  isAdmin = profile?.role === Role.ADMIN;
 
   const menuItems = isAdmin ? adminMenuItems : clientMenuItems;
   return (

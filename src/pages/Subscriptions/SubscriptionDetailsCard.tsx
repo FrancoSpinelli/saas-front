@@ -57,13 +57,6 @@ export default function SubscriptionDetailsCard({ subscription, onCancel, onRene
                         <Divider flexItem sx={{ my: 1 }} />
 
                         <Stack direction="row" alignItems="center" spacing={1}>
-                            <AttachMoneyOutlinedIcon fontSize="small" color="success" />
-                            <Typography variant="body1">
-                                <strong>Precio:</strong> {plan.price} {plan.currency}
-                            </Typography>
-                        </Stack>
-
-                        <Stack direction="row" alignItems="center" spacing={1}>
                             <CalendarToday fontSize="small" color="primary" />
                             <Typography variant="body1">
                                 <strong>Inicio:</strong> {dateFormatter(new Date(startDate))}
@@ -78,9 +71,16 @@ export default function SubscriptionDetailsCard({ subscription, onCancel, onRene
                         </Stack>
 
                         <Stack direction="row" alignItems="center" spacing={1}>
+                            <AttachMoneyOutlinedIcon fontSize="small" color="success" />
+                            <Typography variant="body1">
+                                <strong>Precio:</strong> {plan.price} {plan.currency}
+                            </Typography>
+                        </Stack>
+
+                        <Stack direction="row" alignItems="center" spacing={1}>
                             <Payment fontSize="small" color="success" />
                             <Typography variant="body1">
-                                <strong>Último pago:</strong>{" "}
+                                <strong>Pagado el:</strong>{" "}
                                 {lastPaymentDate ? dateFormatter(new Date(lastPaymentDate)) : "-"}
                             </Typography>
                         </Stack>

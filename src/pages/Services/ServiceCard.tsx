@@ -1,14 +1,25 @@
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import { Box, Button, Card, CardContent, Chip, Grid, Stack, Typography } from "@mui/material";
-import { Service, SubscriptionStatus } from "../../types";
+import { getUserProfile } from "../../api/services";
+import { useFetch } from '../../hooks/useFetch';
+import { Role, Service, SubscriptionStatus } from "../../types";
 import { periodFormatter, subscriptionStatusColorsFormatter, subscriptionStatusFormatter } from "../../utils";
-
 
 interface ServiceCardProps {
     service: Service;
     subscriptionStatus?: SubscriptionStatus;
     isSubscribed?: boolean;
+    clientsCount?: number;
 }
-export default function ServiceCard({ service, subscriptionStatus, isSubscribed = false, }: ServiceCardProps) {
+export default function ServiceCard({ service, subscriptionStatus, isSubscribed = false, clientsCount = 0 }: ServiceCardProps) {
+    const { data: user, loading } = useFetch(getUserProfile);
+
+    const isAdmin = user?.role === Role.ADMIN;
+
+    if (loading) {
+        return <div>Cargando...</div>;
+    }
+
     return (
         <Grid
             key={service._id}
@@ -76,7 +87,6 @@ export default function ServiceCard({ service, subscriptionStatus, isSubscribed 
                                 }}
                             />
                         )}
-
                     </Box>
 
                     <Box p={2} sx={{ flexGrow: 1, display: "flex", flexDirection: "column", pb: 0 }}>
@@ -108,6 +118,18 @@ export default function ServiceCard({ service, subscriptionStatus, isSubscribed 
                         >
                             {service.shortDescription}
                         </Typography>
+
+                        {isAdmin && <Box
+                            display="flex"
+                            alignItems="center"
+                            mt={1}
+                            mb={2}
+                        >
+                            <AccountCircleOutlinedIcon color="action" sx={{ mr: 1 }} />
+                            <Typography variant="body2" color="text.secondary">
+                                {clientsCount > 0 ? `${clientsCount} ${clientsCount === 1 ? 'cliente' : 'clientes'}` : 'Sin clientes aún'}
+                            </Typography>
+                        </Box>}
 
                         {!isSubscribed && <Stack
                             spacing={1}

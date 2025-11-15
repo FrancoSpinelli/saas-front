@@ -15,7 +15,7 @@ export const createSubscription = async (data: {
 
 export const renewSubscription = async (subscriptionId: string) => {
 	return apiPost<Subscription>(`/subscriptions/${subscriptionId}/renew`, {});
-}
+};
 
 export const cancelSubscription = async (subscriptionId: string) => {
 	return apiPost<Subscription>(`/subscriptions/${subscriptionId}/cancel`);

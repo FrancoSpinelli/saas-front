@@ -99,12 +99,12 @@ export default function PaymentsPage({ isAdmin }: PaymentsPageProps) {
 
 
                                     <TableCell align="center">
-                                        <Tooltip title={`Precio: $${payment.plan.price}`}>
+                                        <Tooltip title={`Precio: $${payment.amount}`}>
                                             <Chip label={`${payment.plan.name}`} />
                                         </Tooltip>
                                     </TableCell>
 
-                                    <TableCell align="center">{payment.plan.price} {payment.plan.currency}</TableCell>
+                                    <TableCell align="center">{payment.amount} {payment.plan.currency}</TableCell>
 
                                     <TableCell align="center">
                                         <Chip
@@ -118,7 +118,7 @@ export default function PaymentsPage({ isAdmin }: PaymentsPageProps) {
                                     </TableCell>
 
                                     <TableCell align="center">
-                                        {dateFormatter(new Date(payment.subscription.lastPaymentDate || payment.subscription.startDate))}
+                                        {dateFormatter(new Date(payment.paidAt))}
                                     </TableCell>
 
                                     <TableCell align="center">

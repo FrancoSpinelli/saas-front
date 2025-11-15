@@ -15,7 +15,7 @@ import {
     getUserProfile
 } from "../../api/services";
 
-import { Service, SubscriptionStatus, UserProfile } from "../../types";
+import { Service, Subscription, SubscriptionStatus } from "../../types";
 import {
     nameFormatter
 } from "../../utils";
@@ -26,6 +26,7 @@ import ServiceCard from "../Services/ServiceCard";
 
 import LaunchIcon from '@mui/icons-material/Launch';
 import { useNavigate } from "react-router-dom";
+import { useFetch } from "../../hooks/useFetch";
 
 export default function ClientHomePage() {
 
@@ -33,21 +34,10 @@ export default function ClientHomePage() {
 
     const [loading, setLoading] = useState(true);
 
-    const [user, setUser] = useState<UserProfile | null>(null);
     const [interestedServices, setInterestedServices] = useState<Service[]>([]);
     const [activeServices, setActiveServices] = useState<Service[]>([]);
+    const { data: user } = useFetch(getUserProfile);
 
-    const fetchUserProfile = async () => {
-        try {
-            const res = await getUserProfile();
-            const user = res.data;
-            setUser(user);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const fetchInterestedServices = async () => {
         setLoading(true);
@@ -74,10 +64,17 @@ export default function ClientHomePage() {
     };
 
     useEffect(() => {
-        Promise.all([fetchUserProfile(), fetchInterestedServices(), fetchActiveServices()]);
+        Promise.all([fetchInterestedServices(), fetchActiveServices()]);
     }, []);
 
+    const userSubscriptions: Subscription[] = [];
 
+    user?.subscriptions.forEach((subscription) => {
+        const finded = userSubscriptions.find((s) => s.service._id === subscription.service._id);
+        if (!finded) {
+            userSubscriptions.push(subscription);
+        }
+    });
 
     if (!user) {
         return (
@@ -143,7 +140,7 @@ export default function ClientHomePage() {
 
             <Subtitle>Mis suscripciones</Subtitle>
 
-            {!user.subscriptions.length ? (
+            {!userSubscriptions.length ? (
                 <EmptyState
                     message="No tenés suscripciones activas."
                     buttonLabel="Explorar servicios"
@@ -152,7 +149,7 @@ export default function ClientHomePage() {
                 />
             ) : (
                 <Grid container spacing={3} justifyContent="center" alignItems="stretch">
-                    {user.subscriptions.map((subscription) => (
+                    {userSubscriptions.map((subscription) => (
                         <ServiceCard
                             key={subscription._id}
                             service={subscription.service}
@@ -188,7 +185,7 @@ export default function ClientHomePage() {
                         </Tooltip>
                     }
                 >
-                    No hay servicios marcados como de tu interés. Puedes agregar servicios a tu lista de interés desde tu perfil.
+                    No hay servicios marcados como de tu interés. Puedes agregar categorías a tu lista de interés desde tu perfil.
                 </Alert>
             )}
 
@@ -198,7 +195,7 @@ export default function ClientHomePage() {
                 justifyContent="center"
                 alignItems="stretch"
             >
-                {servicesToShow.slice(0, 6).map((service) => {
+                {servicesToShow.slice(0, 7).map((service) => {
                     const isSubscribed = user.subscriptions.some(
                         (subscription) => subscription.service._id === service._id
                     );

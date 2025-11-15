@@ -2,13 +2,11 @@ import { Box, Grid, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { getActiveServices, getUserProfile } from '../../api/services';
 import Subtitle from '../../Components/Subtitle';
-import { Service, Subscription, SubscriptionStatus, UserProfile } from '../../types';
+import { Service, SubscriptionStatus, UserProfile } from '../../types';
 import ServiceCard from './ServiceCard';
 
 export default function AllServices() {
     const [loading, setLoading] = useState(true);
-
-    const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
     const [services, setServices] = useState<Service[]>([]);
     const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
 
