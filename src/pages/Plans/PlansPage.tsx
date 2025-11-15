@@ -4,8 +4,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import {
     Box,
     Button,
-    Checkbox,
-    FormControlLabel,
     IconButton,
     Paper,
     Switch,
@@ -29,7 +27,7 @@ import { periodFormatter } from "../../utils";
 export default function PlansPage() {
     const navigate = useNavigate();
 
-    const [showInactive, setShowInactive] = useState(false);
+    const [showInactive] = useState(false);
     const [plans, setPlans] = useState<Plan[]>([]);
     const [, setLoading] = useState(true);
 
@@ -67,6 +65,8 @@ export default function PlansPage() {
                 if (response.success) {
                     toast.success("Plan eliminado exitosamente");
                     fetchPlans();
+                } else {
+                    toast.error(response.message || "Error al eliminar el plan");
                 }
             }
         });
@@ -161,7 +161,7 @@ export default function PlansPage() {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <Box mt={2} display="flex" justifyContent="flex-end">
+            {/* <Box mt={2} display="flex" justifyContent="flex-end">
                 <FormControlLabel
                     control={
                         <Checkbox
@@ -171,7 +171,7 @@ export default function PlansPage() {
                     }
                     label="Mostrar inactivos"
                 />
-            </Box>
+            </Box> */}
         </Box>
     );
 }

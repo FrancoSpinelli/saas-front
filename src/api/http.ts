@@ -6,7 +6,7 @@ import axios, {
 import { toast } from "react-toastify";
 import { getToken, removeDataFromStorage } from "./services";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 const http = axios.create({
 	baseURL: API_URL,

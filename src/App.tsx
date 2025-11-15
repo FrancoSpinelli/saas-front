@@ -8,6 +8,7 @@ import CategoriesPage from "./pages/Categories/CategoriesPage";
 import CreateCategoryPage from "./pages/Categories/CreateOrEditCategoryPage";
 import AdminHomePage from "./pages/Home/AdminHomePage";
 import ClientHomePage from "./pages/Home/ClientHomePage";
+import NotificationsPage from "./pages/Notifications/NotificationsPage";
 import PaymentsPage from "./pages/Payments/PaymentsPage";
 import CreateOrEditPlanPage from "./pages/Plans/CreateOrEditPlanPage";
 import PlansPage from "./pages/Plans/PlansPage";
@@ -104,6 +105,10 @@ function App() {
           <Route path="profile/edit" element={
             <ProtectedRoute role={[Role.ADMIN, Role.CLIENT]}
             ><EditProfilePage /></ProtectedRoute>
+          } />
+          <Route path="notifications" element={
+            <ProtectedRoute role={[Role.CLIENT]}
+            ><NotificationsPage /></ProtectedRoute>
           } />
         </Route>
       </Routes>

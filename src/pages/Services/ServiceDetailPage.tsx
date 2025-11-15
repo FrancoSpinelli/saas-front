@@ -18,6 +18,7 @@ import { dateFormatter, periodFormatter } from "../../utils";
 
 import { LockOutlined } from "@mui/icons-material";
 import { toast } from "react-toastify";
+import ProfileListener from "../../Components/ProfileListener/ProfileListener";
 import { confirmAlert } from "../../Components/SweetAlert";
 import SubscriptionDetailsCard from "../Subscriptions/SubscriptionDetailsCard";
 
@@ -25,6 +26,7 @@ export default function ServiceDetailPage() {
     const { id } = useParams();
     const [service, setService] = useState<Service | null>(null);
     const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
+    const [saving, setSaving] = useState(false);
 
 
     const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
@@ -92,6 +94,8 @@ export default function ServiceDetailPage() {
 
 
     const handleCancelSubscription = () => {
+        if (saving) return;
+        setSaving(true);
         confirmAlert({
             title: "¿Estás seguro?",
             text: `Podras reactivar la suscripción en cualquier momento. Podras disfrutar del servicio hasta el ${dateFormatter(clientSubscription!.endDate)}`,
@@ -104,12 +108,14 @@ export default function ServiceDetailPage() {
                 }
             }
         });
+        setSaving(false);
     }
 
 
 
     const handleCreateSubscription = async () => {
-
+        if (saving) return;
+        setSaving(true);
         const subscriptionData = {
             serviceId: service._id,
             planId: selectedPlan!,
@@ -130,6 +136,8 @@ export default function ServiceDetailPage() {
             toast.error(error.response?.data?.message || "Error al iniciar sesión", {
                 autoClose: 1000,
             });
+        } finally {
+            setSaving(false);
         }
     }
 
@@ -286,9 +294,9 @@ export default function ServiceDetailPage() {
                                 {views.selectPlan && (
                                     <>
                                         <Divider sx={{ my: 3 }} />
-                                        <Box sx={{ mt: 2, display: "flex", alignItems: "center", gap: 2 }}>
+                                        <Box sx={{ mt: 2, display: "flex", alignItems: "center", gap: 4 }}>
                                             <Typography variant="h6" fontWeight={600}>
-                                                Seleccione un plan:
+                                                Seleccione un plan<Typography variant="h5" color="error.main" component="span">*</Typography>
                                             </Typography>
 
                                             <Stack
@@ -379,7 +387,7 @@ export default function ServiceDetailPage() {
                                             }}
                                             onClick={handleCreateSubscription}
                                         >
-                                            Suscribirme
+                                            {saving ? "Procesando..." : "Suscribirse"}
                                         </Button>
                                     </>
                                 )}
@@ -412,6 +420,10 @@ export default function ServiceDetailPage() {
                     </Card>
                 </Grid>
                 {clientSubscription && <SubscriptionDetailsCard subscription={clientSubscription} onCancel={handleCancelSubscription} onRenew={handleCreateSubscription} />}
+                <ProfileListener userId={currentUser._id} onMessage={async () => {
+                    getUserProfile();
+                    fetchService
+                }} />
             </Grid>
         </Box >
     );

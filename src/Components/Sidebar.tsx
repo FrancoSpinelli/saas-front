@@ -3,6 +3,7 @@ import CategoryIcon from "@mui/icons-material/CategoryOutlined";
 import HomeIcon from "@mui/icons-material/HomeOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MonetizationOnOutlined from '@mui/icons-material/MonetizationOnOutlined';
+import NotificationsIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import PaymentIcon from "@mui/icons-material/Payment";
 import PeopleIcon from "@mui/icons-material/PeopleOutline";
 import ShopOutlinedIcon from '@mui/icons-material/ShopOutlined';
@@ -10,6 +11,7 @@ import VideoSettingsIcon from '@mui/icons-material/VideoSettings';
 
 import {
   Avatar,
+  Badge,
   Box,
   Divider,
   Drawer,
@@ -20,26 +22,35 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+import { JSX, useEffect, useState } from 'react';
 import { Link, useLocation } from "react-router-dom";
-import { getToken, getUserProfile, removeDataFromStorage } from "../api/services";
-import { useFetch } from '../hooks/useFetch';
-import { Role } from "../types";
+import { getUserProfile, removeDataFromStorage } from "../api/services";
+import { Role, UserProfile } from "../types";
 import { getInitials, nameFormatter } from "../utils";
+import ProfileListener from './ProfileListener/ProfileListener';
 
 const drawerWidth = 240;
 
-const adminMenuItems = [
+interface MenuItem {
+  label: string;
+  path: string;
+  icon: JSX.Element;
+  badge?: number;
+}
+
+const adminMenuItems: MenuItem[] = [
   { label: "Dashboard", path: "/admin", icon: <HomeIcon /> },
   { label: "Usuarios", path: "/users", icon: <PeopleIcon /> },
   { label: "Categorías", path: "/categories", icon: <CategoryIcon /> },
   { label: "Servicios", path: "/services", icon: <VideoSettingsIcon /> },
   { label: "Subscripciones", path: "/subscriptions", icon: <ShopOutlinedIcon /> },
-  { label: "Planes", path: "/plans", icon: <MonetizationOnOutlined /> },
   { label: "Pagos", path: "/payments", icon: <PaymentIcon /> },
+  { label: "Planes", path: "/plans", icon: <MonetizationOnOutlined /> },
 ];
 
-const clientMenuItems = [
+const clientMenuItems: MenuItem[] = [
   { label: "Inicio", path: "/", icon: <HomeIcon /> },
+  { label: "Notificaciones", path: "/notifications", icon: <NotificationsIcon />, badge: 1 },
   { label: "Explorar Servicios", path: "/services/all", icon: <VideoSettingsIcon /> },
   { label: "Mis Subscripciones", path: "/subscriptions", icon: <MonetizationOnOutlined /> },
   { label: "Mis Pagos", path: "/payments", icon: <PaymentIcon /> },
@@ -49,26 +60,28 @@ const clientMenuItems = [
 export default function Sidebar() {
   const { pathname } = useLocation();
 
-  const token = getToken();
   const handleLogout = async () => {
     removeDataFromStorage();
     window.location.href = "/login";
   };
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const getUser = async () => {
+    const res = await getUserProfile();
+    setUser(res.data);
+  };
 
-  if (!token) {
-    return null;
+  useEffect(() => {
+    getUser();
+  }, []);
+
+  if (!user) {
+    return <div>Cargando...</div>;
   }
 
-  const { data: profile } = useFetch(getUserProfile);
-  let isAdmin = false;
 
-  if (!profile) {
-    return null;
-  }
-
-  isAdmin = profile?.role === Role.ADMIN;
-
+  const isAdmin = user?.role === Role.ADMIN;
   const menuItems = isAdmin ? adminMenuItems : clientMenuItems;
+
   return (
     <Drawer
       variant="permanent"
@@ -86,11 +99,11 @@ export default function Sidebar() {
       <Toolbar sx={{ display: "flex", flexDirection: "column", gap: 1, py: 1 }}>
         <Avatar
           variant="rounded"
-          src={profile?.image || `https://placehold.co/100x100/png?text=${getInitials(nameFormatter(profile), 2)}`}
+          src={user?.image || `https://placehold.co/100x100/png?text=${getInitials(nameFormatter(user), 2)}`}
           sx={{ width: 40, height: 40 }}
         />
         <Typography variant="body1" noWrap>
-          {isAdmin ? "Panel Admin" : ""} {nameFormatter(profile)}
+          {isAdmin ? "Panel Admin" : ""} {nameFormatter(user)}
         </Typography>
       </Toolbar>
 
@@ -109,7 +122,16 @@ export default function Sidebar() {
               selected={pathname === item.path}
               sx={{ "&:hover": { backgroundColor: "#0a3b66" } }}
             >
-              <ListItemIcon sx={{ color: "#fff" }}>{item.icon}</ListItemIcon>
+              <ListItemIcon sx={{ color: "#fff" }}>
+                {item.badge ? (
+                  <Badge badgeContent={user.unreadNotificationsCount} color="error">
+                    {item.icon}
+                  </Badge>
+                ) : (
+                  item.icon
+                )}
+              </ListItemIcon>
+
               <ListItemText primary={item.label} />
             </ListItemButton>
           ))}
@@ -126,6 +148,7 @@ export default function Sidebar() {
           </ListItemButton>
         </List>
       </Box>
+      <ProfileListener userId={user._id} onMessage={getUser} />
     </Drawer>
   );
 }

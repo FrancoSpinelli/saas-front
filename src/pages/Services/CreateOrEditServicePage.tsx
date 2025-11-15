@@ -139,7 +139,7 @@ export default function CreateOrEditServicePage() {
             }
 
             toast.success(isEditMode ? "Servicio actualizado" : "Servicio creado");
-            navigate("/services");
+            navigate(`/services/${isEditMode ? id : response.data._id}`);
 
         } catch (error) {
             toast.error("Error inesperado");

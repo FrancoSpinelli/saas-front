@@ -16,8 +16,9 @@ import { useEffect, useState } from "react";
 import { getUserProfile } from '../../api/services';
 import { getPayments } from "../../api/services/payments.service";
 import EmptyState from "../../Components/EmptyState";
+import ProfileListener from '../../Components/ProfileListener/ProfileListener';
 import Subtitle from "../../Components/Subtitle";
-import { Payment } from "../../types";
+import { Payment, UserProfile } from "../../types";
 import { dateFormatter, nameFormatter, paymentMethodFormatter, paymentStatusColorsFormatter, paymentStatusFormatter } from "../../utils";
 
 
@@ -28,6 +29,7 @@ interface PaymentsPageProps {
 export default function PaymentsPage({ isAdmin }: PaymentsPageProps) {
 
     const [payments, setPayments] = useState<Payment[]>([]);
+    const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
     const [, setLoading] = useState(true);
 
     const fetchPayments = async () => {
@@ -38,6 +40,7 @@ export default function PaymentsPage({ isAdmin }: PaymentsPageProps) {
                 setPayments(res.data);
             } else {
                 const res = await getUserProfile();
+                setCurrentUser(res.data);
                 setPayments(res.data.payments);
             }
         } catch (error) {
@@ -136,6 +139,10 @@ export default function PaymentsPage({ isAdmin }: PaymentsPageProps) {
                 </TableContainer>
                 )
             }
+
+            <ProfileListener userId={currentUser?._id!} onMessage={async () => {
+                await fetchPayments();
+            }} />
         </Box>
     );
 }

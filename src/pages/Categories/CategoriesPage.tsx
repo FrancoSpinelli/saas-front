@@ -1,13 +1,9 @@
 import { Add, Delete, Edit } from "@mui/icons-material";
 import {
-    Avatar,
     Box,
     Button,
-    Checkbox,
-    FormControlLabel,
     IconButton,
     Paper,
-    Switch,
     Table,
     TableBody,
     TableCell,
@@ -18,15 +14,14 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { activeCategoryToggle, deleteCategory, getCategories } from "../../api/services";
+import { deleteCategory, getCategories } from "../../api/services";
 import Subtitle from "../../Components/Subtitle";
 import { confirmAlert } from "../../Components/SweetAlert";
 import { Category } from "../../types";
-import { getInitials } from "../../utils";
 
 export default function CategoriesPage() {
 
-    const [showInactive, setShowInactive] = useState(false);
+    const [showInactive] = useState(false);
     const [categories, setCategories] = useState<Category[]>([]);
     const [, setLoading] = useState(true);
 
@@ -64,6 +59,8 @@ export default function CategoriesPage() {
                 if (response.success) {
                     toast.success("Categoría eliminada exitosamente");
                     fetchCategories();
+                } else {
+                    toast.error(response.message || "Error al eliminar la categoría");
                 }
             }
         });
@@ -74,13 +71,13 @@ export default function CategoriesPage() {
     };
 
 
-    const handleToggleActive = async (id: string, currentState: boolean) => {
+/*     const handleToggleActive = async (id: string, currentState: boolean) => {
         const response = await activeCategoryToggle(id);
         if (response.success) {
             toast.success(`Categoría ${currentState ? "desactivada" : "activada"} exitosamente`);
             fetchCategories();
         }
-    };
+    }; */
 
     return (
         <Box p={3}>
@@ -104,9 +101,9 @@ export default function CategoriesPage() {
                         <TableRow>
                             <TableCell sx={{ width: "5%", whiteSpace: "nowrap" }}><strong>Nombre</strong></TableCell>
                             <TableCell sx={{ width: "30%", whiteSpace: "nowrap" }}><strong>Descripción</strong></TableCell>
-                            <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
+                            {/* <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
                                 <strong>Activo</strong>
-                            </TableCell>
+                            </TableCell> */}
                             <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
                                 <strong>Acciones</strong>
                             </TableCell>
@@ -120,7 +117,7 @@ export default function CategoriesPage() {
 
                                 <TableCell>{cat.description}</TableCell>
 
-                                <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
+                                {/* <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
                                     <Switch
                                         checked={cat.active}
                                         onChange={() =>
@@ -128,7 +125,7 @@ export default function CategoriesPage() {
                                         }
                                         color="primary"
                                     />
-                                </TableCell>
+                                </TableCell> */}
 
                                 <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
                                     <Tooltip title="Editar">
@@ -148,7 +145,7 @@ export default function CategoriesPage() {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <Box mt={2} display="flex" justifyContent="flex-end">
+            {/* <Box mt={2} display="flex" justifyContent="flex-end">
                 <FormControlLabel
                     control={
                         <Checkbox
@@ -158,7 +155,7 @@ export default function CategoriesPage() {
                     }
                     label="Mostrar inactivos"
                 />
-            </Box>
+            </Box> */}
         </Box>
     );
 }

@@ -101,7 +101,7 @@ export default function AdminHomePage() {
                 Suscripciones por categoría
             </Typography>
             <Grid container spacing={2}>
-                {subscriptionsByCategory.map((cat: any) => (
+                {subscriptionsByCategory.sort((a, b) => b.total - a.total).map((cat: any) => (
                     <Grid key={cat._id} sx={{ flexGrow: 1, width: { xs: '100%', sm: '45%', md: '22%' } }}>
                         <StatCard title={cat.categoryName} value={cat.total} color="secondary" />
                     </Grid>

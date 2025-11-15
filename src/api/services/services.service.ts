@@ -19,11 +19,11 @@ export const getServiceById = async (id: string) => {
 };
 
 export const createService = async (service: CreateServiceDTO) => {
-	return apiPost("/services", service);
+	return apiPost<Service>("/services", service);
 };
 
 export const updateService = async (id: string, service: CreateServiceDTO) => {
-	return apiPut(`/services/${id}`, service);
+	return apiPut<Service>(`/services/${id}`, service);
 };
 
 export const activeServiceToggle = async (id: string) => {

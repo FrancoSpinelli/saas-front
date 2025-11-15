@@ -35,6 +35,22 @@ export enum SubscriptionStatus {
 	CANCELED = "CANCELED",
 }
 
+export enum NotificationType {
+	SUBSCRIPTIONS_ACTIVE = "SUBSCRIPTIONS_ACTIVE",
+	SUBSCRIPTIONS_PENDING = "SUBSCRIPTIONS_PENDING",
+	SUBSCRIPTIONS_EXPIRED = "SUBSCRIPTIONS_EXPIRED",
+	SUBSCRIPTIONS_CANCELED = "SUBSCRIPTIONS_CANCELED",
+	SUBSCRIPTIONS_RENEWED = "SUBSCRIPTIONS_RENEWED",
+
+	PAYMENTS_SUCCESS = "PAYMENTS_SUCCESS",
+}
+
+export enum ReferenceType {
+	SUBSCRIPTION = "SUBSCRIPTION",
+	SERVICE = "SERVICE",
+	PAYMENT = "PAYMENT",
+}
+
 export interface User {
 	_id: string;
 	firstName: string;
@@ -107,6 +123,7 @@ export interface UserProfile extends User {
 	subscriptions: Subscription[];
 	payments: Payment[];
 	interests: Category[];
+	unreadNotificationsCount: number;
 }
 
 export interface DashboardData {
@@ -137,4 +154,15 @@ export interface DashboardData {
 		service: Service;
 		count: number;
 	}[];
+}
+
+export interface Notification {
+	_id: string;
+	type: NotificationType;
+	client: User;
+	message: string;
+	read: boolean;
+	referenceType?: ReferenceType;
+	referenceId?: string;
+	createdAt: Date;
 }

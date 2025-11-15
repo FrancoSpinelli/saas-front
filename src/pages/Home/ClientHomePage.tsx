@@ -15,7 +15,7 @@ import {
     getUserProfile
 } from "../../api/services";
 
-import { Service, Subscription, SubscriptionStatus } from "../../types";
+import { Service, Subscription, SubscriptionStatus, UserProfile } from "../../types";
 import {
     nameFormatter
 } from "../../utils";
@@ -26,7 +26,7 @@ import ServiceCard from "../Services/ServiceCard";
 
 import LaunchIcon from '@mui/icons-material/Launch';
 import { useNavigate } from "react-router-dom";
-import { useFetch } from "../../hooks/useFetch";
+import ProfileListener from "../../Components/ProfileListener/ProfileListener";
 
 export default function ClientHomePage() {
 
@@ -36,7 +36,16 @@ export default function ClientHomePage() {
 
     const [interestedServices, setInterestedServices] = useState<Service[]>([]);
     const [activeServices, setActiveServices] = useState<Service[]>([]);
-    const { data: user } = useFetch(getUserProfile);
+    const [user, setUser] = useState<UserProfile | null>(null);
+
+    const fetchUser = async () => {
+        try {
+            const res = await getUserProfile();
+            setUser(res.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
 
     const fetchInterestedServices = async () => {
@@ -64,7 +73,7 @@ export default function ClientHomePage() {
     };
 
     useEffect(() => {
-        Promise.all([fetchInterestedServices(), fetchActiveServices()]);
+        Promise.all([fetchUser(), fetchInterestedServices(), fetchActiveServices()]);
     }, []);
 
     const userSubscriptions: Subscription[] = [];
@@ -215,6 +224,9 @@ export default function ClientHomePage() {
             >
                 Ver todos los servicios
             </Button>
+            <ProfileListener userId={user._id} onMessage={async () => {
+                fetchUser();
+            }} />
         </Box>
     );
 }

@@ -1,38 +1,28 @@
-import EditIcon from "@mui/icons-material/Edit";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Add } from "@mui/icons-material";
 import {
     Avatar,
     Box,
     Button,
-    Checkbox,
     Chip,
-    FormControlLabel,
-    IconButton,
     Paper,
-    Switch,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
-    TableRow,
-    Tooltip
+    TableRow
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import { activeUserToggle, deleteUser, getUsers } from "../../api/services";
+import { getUsers } from "../../api/services";
 import Subtitle from "../../Components/Subtitle";
 import { Role, User } from "../../types";
 import { nameFormatter } from "../../utils";
-import { Add } from "@mui/icons-material";
-import { confirmAlert } from "../../Components/SweetAlert";
 
 export default function UsersPage() {
     const [users, setUsers] = useState<User[]>([]);
     const [, setLoading] = useState(true);
 
-    const [showInactive, setShowInactive] = useState(false);
+    const [showInactive] = useState(false);
 
     const fetchUsers = async () => {
         try {
@@ -55,39 +45,17 @@ export default function UsersPage() {
         fetchUsers();
     }, [showInactive]);
 
-    const handleEdit = (id: string) => {
-        console.log("Editar usuario:", id);
-    };
-
-    const handleView = (id: string) => {
-        console.log("Ver usuario:", id);
-    };
-
-    const handleToggleActive = async (id: string, currentState: boolean) => {
+    /* const handleToggleActive = async (id: string, currentState: boolean) => {
         const response = await activeUserToggle(id);
         if (response.success) {
             toast.success(`Usuario ${currentState ? "desactivado" : "activado"} exitosamente`);
             fetchUsers();
         }
-    };
+    }; */
 
     const handleCreate = () => {
         window.location.href = `/users/create`;
     };
-
-    const handleDelete = (id: string) => {
-        confirmAlert({
-            title: "¿Estás seguro?",
-            text: "Esta acción no se puede deshacer",
-            onConfirm: async () => {
-                const response = await deleteUser(id);
-                if (response.success) {
-                    toast.success("Usuario eliminado exitosamente");
-                    fetchUsers();
-                }
-            }
-        });
-    }
 
     return (
         <Box p={3}>
@@ -109,14 +77,11 @@ export default function UsersPage() {
                         <TableRow>
                             <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }}><strong>Avatar</strong></TableCell>
                             <TableCell sx={{ width: "15%", whiteSpace: "nowrap" }}><strong>Nombre</strong></TableCell>
+                            <TableCell sx={{ width: "30%", whiteSpace: "nowrap" }} align="left"><strong>Rol</strong></TableCell>
                             <TableCell sx={{ width: "30%", whiteSpace: "nowrap" }}><strong>Correo</strong></TableCell>
-                            <TableCell sx={{ width: "30%", whiteSpace: "nowrap" }} align="center"><strong>Rol</strong></TableCell>
-                            <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
+                            {/* <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
                                 <strong>Activo</strong>
-                            </TableCell>
-                            <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
-                                <strong>Acciones</strong>
-                            </TableCell>
+                            </TableCell> */}
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -132,9 +97,7 @@ export default function UsersPage() {
 
                                 <TableCell>{nameFormatter(user)}</TableCell>
 
-                                <TableCell>{user.email}</TableCell>
-
-                                <TableCell align="center">
+                                <TableCell align="left">
                                     <Chip
                                         label={user.role === Role.ADMIN ? "Admin" : "Cliente"}
                                         color={user.role === Role.ADMIN ? "primary" : "default"}
@@ -142,43 +105,23 @@ export default function UsersPage() {
                                     />
                                 </TableCell>
 
-                                <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
+                                <TableCell>{user.email}</TableCell>
+
+                                {/* <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
                                     <Switch
                                         checked={user.active}
                                         onChange={() => handleToggleActive(user._id, user.active)}
                                         color="primary"
                                     />
-                                </TableCell>
+                                </TableCell> */}
 
-                                <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
-                                    <Tooltip title="Editar">
-                                        <IconButton onClick={() => handleEdit(user._id)}>
-                                            <EditIcon />
-                                        </IconButton>
-                                    </Tooltip>
 
-                                    <Tooltip title="Ver">
-                                        <IconButton color="primary" onClick={() => handleView(user._id)}>
-                                            <VisibilityIcon />
-                                        </IconButton>
-                                    </Tooltip>
-
-                                    <Tooltip title="Eliminar">
-                                        <IconButton
-                                            color="error"
-                                            onClick={() => handleDelete(user._id!)}
-                                        >
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </Tooltip>
-
-                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer>
-            <Box mt={2} display="flex" justifyContent="flex-end">
+            {/*  <Box mt={2} display="flex" justifyContent="flex-end">
                 <FormControlLabel
                     control={
                         <Checkbox
@@ -188,7 +131,7 @@ export default function UsersPage() {
                     }
                     label="Mostrar inactivos"
                 />
-            </Box>
+            </Box> */}
         </Box>
     );
 }

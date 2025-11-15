@@ -6,13 +6,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import {
     Box,
     Button,
-    Checkbox,
     Chip,
-    FormControlLabel,
     IconButton,
     Paper,
     Stack,
-    Switch,
     Table,
     TableBody,
     TableCell,
@@ -26,7 +23,7 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { activeServiceToggle, deleteService, getServices } from "../../api/services";
+import { deleteService, getServices } from "../../api/services";
 import Subtitle from "../../Components/Subtitle";
 import { confirmAlert } from "../../Components/SweetAlert";
 import { Service } from "../../types";
@@ -35,7 +32,7 @@ import { periodFormatter } from "../../utils";
 export default function ServicesPage() {
     const navigate = useNavigate();
 
-    const [showInactive, setShowInactive] = useState(false);
+    const [showInactive] = useState(false);
     const [services, setServices] = useState<Service[]>([]);
     const [, setLoading] = useState(true);
 
@@ -74,6 +71,8 @@ export default function ServicesPage() {
                 if (response.success) {
                     toast.success("Servicio eliminado exitosamente");
                     fetchServices();
+                } else {
+                    toast.error(response.message || "Error al eliminar el servicio");
                 }
             }
         });
@@ -83,13 +82,13 @@ export default function ServicesPage() {
         navigate("/services/create");
     };
 
-    const handleToggleActive = async (id: string, currentState: boolean) => {
-        const response = await activeServiceToggle(id);
-        if (response.success) {
-            toast.success(`Servicio ${currentState ? "desactivado" : "activado"} exitosamente`);
-            fetchServices();
-        }
-    };
+    /*  const handleToggleActive = async (id: string, currentState: boolean) => {
+         const response = await activeServiceToggle(id);
+         if (response.success) {
+             toast.success(`Servicio ${currentState ? "desactivado" : "activado"} exitosamente`);
+             fetchServices();
+         }
+     }; */
     return (
         <Box p={3}>
             <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -113,9 +112,9 @@ export default function ServicesPage() {
                             <TableCell><strong>Descripción</strong></TableCell>
                             <TableCell align="center"><strong>Categoría</strong></TableCell>
                             <TableCell align="center"><strong>Planes</strong></TableCell>
-                            <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
+                            {/* <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
                                 <strong>Activo</strong>
-                            </TableCell>
+                            </TableCell> */}
                             <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
                                 <strong>Acciones</strong>
                             </TableCell>
@@ -155,7 +154,7 @@ export default function ServicesPage() {
                                 </TableCell>
 
 
-                                <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
+                                {/* <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
                                     <Switch
                                         checked={service.active}
                                         onChange={() =>
@@ -163,7 +162,7 @@ export default function ServicesPage() {
                                         }
                                         color="primary"
                                     />
-                                </TableCell>
+                                </TableCell> */}
 
                                 <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
                                     <Tooltip title="Editar">
@@ -186,7 +185,7 @@ export default function ServicesPage() {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <Box mt={2} display="flex" justifyContent="flex-end">
+            {/* <Box mt={2} display="flex" justifyContent="flex-end">
                 <FormControlLabel
                     control={
                         <Checkbox
@@ -196,7 +195,7 @@ export default function ServicesPage() {
                     }
                     label="Mostrar inactivos"
                 />
-            </Box>
+            </Box> */}
         </Box>
     );
 }

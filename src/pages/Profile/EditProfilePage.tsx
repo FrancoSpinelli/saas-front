@@ -5,7 +5,6 @@ import {
     Box,
     Button,
     Chip,
-    CircularProgress,
     Container,
     CssBaseline,
     FormControl,
@@ -22,22 +21,12 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import { getCategories, getUserProfile, updateUserProfile } from "../../api/services";
-import { useFetch } from "../../hooks/useFetch";
 import { Category, PaymentMethod, UserProfile } from "../../types";
 import { paymentMethodFormatter } from "../../utils";
 
 export default function EditProfilePage() {
     const navigate = useNavigate();
 
-    const { data: user } = useFetch(getUserProfile);
-    if (!user) {
-        toast.error("No se encontró el usuario");
-        navigate("/login");
-        return;
-    }
-
-    const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const [categories, setCategories] = useState<Category[]>([]);
@@ -48,7 +37,10 @@ export default function EditProfilePage() {
     const [description, setDescription] = useState("");
     const [interests, setInterests] = useState<Category[]>([]);
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(PaymentMethod.BANK_TRANSFER);
+    const [saving, setSaving] = useState(false);
 
+
+    const [user, setUser] = useState<UserProfile | null>(null);
     const fetchData = async () => {
         try {
             const [catsRes, userRes] = await Promise.all([
@@ -56,17 +48,19 @@ export default function EditProfilePage() {
                 getUserProfile()
             ]);
 
+            const user = userRes.data;
+
+            setUser(user);
             setCategories(catsRes.data);
-            setFirstName(userRes.data.firstName);
-            setLastName(userRes.data.lastName);
-            setEmail(userRes.data.email);
-            setDescription(userRes.data.description || "");
-            setPaymentMethod(userRes.data.paymentMethod)
-            setInterests(userRes.data.interests || []);
-        } catch (err) {
-            setError("Error al cargar los datos del perfil");
+            setFirstName(user.firstName);
+            setLastName(user.lastName);
+            setEmail(user.email);
+            setDescription(user.description || "");
+            setPaymentMethod(user.paymentMethod);
+            setInterests(user.interests || []);
+        } catch {
+            setUser(null);
         } finally {
-            setLoading(false);
         }
     };
 
@@ -74,10 +68,15 @@ export default function EditProfilePage() {
         fetchData();
     }, [navigate]);
 
+    if (!user) {
+        navigate("/login");
+        return;
+    }
+
     const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setSaving(true);
         setError(null);
+        setSaving(true);
 
         try {
             const payload: Partial<UserProfile> = {
@@ -96,26 +95,12 @@ export default function EditProfilePage() {
             } else {
                 toast.error(response.message || "Error al guardar los cambios");
             }
-        } catch {
-            setError("Error al guardar los cambios");
-        } finally {
             setSaving(false);
-        }
+        } catch { }
+
     };
 
-    if (loading)
-        return (
-            <Box
-                sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: "80vh",
-                }}
-            >
-                <CircularProgress />
-            </Box>
-        );
+
 
     return (
         <Container component="main" maxWidth="sm">
