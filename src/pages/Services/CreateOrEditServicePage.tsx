@@ -107,23 +107,23 @@ export default function CreateOrEditServicePage() {
         event.preventDefault();
         setLoading(true);
         setErrors([]);
-
+        
         const service: CreateServiceDTO = {
             name,
             shortDescription,
             longDescription,
             category: category!,
             plans,
-            image: !image ? `https://placehold.co/500x200?text=${encodeURIComponent(name)}` : undefined,
+            image: !image ? `https://placehold.co/500x200?text=${encodeURIComponent(name)}` : image,
         };
-
+        
         const validationErrors = serviceValidation(service);
         if (validationErrors.length) {
             setErrors(validationErrors);
             setLoading(false);
             return;
         }
-
+        
         try {
             let response;
 
@@ -245,14 +245,14 @@ export default function CreateOrEditServicePage() {
                         </Select>
                     </FormControl>
 
-                    {/*                    <TextField
+                    <TextField
                         margin="normal"
                         fullWidth
                         label="URL de imagen (opcional)"
                         value={image}
                         onChange={(e) => setImage(e.target.value)}
                     />
- */}
+
                     {errors.map((err, index) => (
                         <Alert key={index} severity="error" sx={{ mt: 1 }}>
                             {err}

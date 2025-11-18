@@ -6,7 +6,6 @@ import {
     Button,
     IconButton,
     Paper,
-    Switch,
     Table,
     TableBody,
     TableCell,
@@ -18,7 +17,7 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { activePlanToggle, deletePlan, getPlans } from "../../api/services";
+import { deletePlan, getPlans } from "../../api/services";
 import Subtitle from "../../Components/Subtitle";
 import { confirmAlert } from "../../Components/SweetAlert";
 import { Plan } from "../../types";
@@ -75,14 +74,14 @@ export default function PlansPage() {
     const handleCreate = () => {
         navigate("/plans/create");
     };
-
+/* 
     const handleToggleActive = async (id: string, currentState: boolean) => {
         const response = await activePlanToggle(id);
         if (response.success) {
             toast.success(`Plan ${currentState ? "desactivado" : "activado"} exitosamente`);
             fetchPlans();
         }
-    };
+    }; */
 
     return (
         <Box p={3}>
@@ -109,9 +108,9 @@ export default function PlansPage() {
                             <TableCell sx={{ width: "10%", whiteSpace: "nowrap" }} align="center"><strong>Período</strong></TableCell>
                             <TableCell sx={{ width: "10%", whiteSpace: "nowrap" }} align="center"><strong>Precio</strong></TableCell>
                             <TableCell sx={{ width: "10%", whiteSpace: "nowrap" }} align="center"><strong>Moneda</strong></TableCell>
-                            <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
+{/*                             <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
                                 <strong>Activo</strong>
-                            </TableCell>
+                            </TableCell> */}
                             <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
                                 <strong>Acciones</strong>
                             </TableCell>
@@ -131,13 +130,13 @@ export default function PlansPage() {
 
                                 <TableCell align="center">{plan.currency}</TableCell>
 
-                                <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
+{/*                                 <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
                                     <Switch
                                         checked={plan.active}
                                         onChange={() => handleToggleActive(plan._id!, plan.active)}
                                         color="primary"
                                     />
-                                </TableCell>
+                                </TableCell> */}
 
                                 <TableCell sx={{ width: "1%", whiteSpace: "nowrap" }} align="center">
                                     <Tooltip title="Editar">

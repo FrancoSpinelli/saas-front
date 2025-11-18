@@ -1,4 +1,6 @@
-import { Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { getUserProfile, removeDataFromStorage } from "../api/services";
 import { Role } from "../types";
 
 interface Props {
@@ -7,27 +9,36 @@ interface Props {
 }
 
 const ProtectedRoute = ({ children, role = [Role.ADMIN] }: Props) => {
-	const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-	if (!token) {
-		return <Navigate to="/login" replace />;
-	}
+	const navigate = useNavigate();
 
-	const user = localStorage.getItem("user") || sessionStorage.getItem("user");
-	if (!user) {
-		return <Navigate to="/login" replace />;
-	}
 
-	const userRole = JSON.parse(user).role as Role;
-	if (!role.includes(userRole)) {
-		let to = "/login"
-		if (userRole === Role.CLIENT) {
-			to = "/"
+	const fetchUser = async () => {
+		try {
+			const res = await getUserProfile();
+			const userRole = res.data.role;
+			if (!role.includes(res.data.role!)) {
+				let to = "/login"
+				if (userRole === Role.CLIENT) {
+					to = "/"
+				}
+				if (userRole === Role.ADMIN) {
+					to = "/admin"
+				}
+				return navigate(to);
+			}
+
+		} catch (error: any) {
+			if (error.status == 401) {
+				console.error(error);
+				removeDataFromStorage();
+				return navigate("/login")
+			}
 		}
-		if (userRole === Role.ADMIN) {
-			to = "/admin"
-		}
-		return <Navigate to={to} replace />;
-	}
+	};
+
+	useEffect(() => {
+		fetchUser()
+	}, [])
 
 	return <>{children}</>;
 };
